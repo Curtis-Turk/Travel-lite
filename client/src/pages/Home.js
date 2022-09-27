@@ -2,9 +2,8 @@ import { useState, useRef } from "react";
 import styled from "styled-components";
 import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
 import SearchIcon from "@mui/icons-material/Search";
-import TextField from "@mui/material/TextField";
 import Container from "@mui/material/Container";
-import { Autocomplete, DirectionsRenderer, DirectionsService } from "@react-google-maps/api";
+import { Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
 
 const center = { lat: 51.597656, lng: -0.172282 };
 
@@ -17,30 +16,40 @@ function Home() {
   const [directionRes, setDirectionRes] = useState(null);
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
+  const [travel_stops, setTravel_stops] = useState("");
 
   const origin = useRef();
   const destination = useRef();
 
   const calculateRoute = async () => {
-    console.log(origin.current.value);
     if (origin.current.value === "" || destination.current.value === "") {
       return;
     }
-    // eslint-disable-next-line no-undef
+      
+    const google = window.google;
     const directionsService = new google.maps.DirectionsService();
+
     const results = await directionsService.route({
       origin: origin.current.value,
       destination: destination.current.value,
-      // eslint-disable-next-line no-undef
       travelMode: google.maps.TravelMode.TRANSIT,
+      transitOptions: {
+        modes: [google.maps.TransitMode.TRAIN],
+      },
     });
-    console.log(results.travelMode);
+    const currentRoute = results.routes[0].legs[0];
+    // for (let i = 0; i < currentRoute.steps.length; i++) {
+    //   console.log(currentRoute.steps[i].transit);
+    // }
+
+    console.log(currentRoute.steps[0].transit.arrival_stop.name);
     setDirectionRes(results);
-    setDistance(results.routes[0].legs[0].distance.value);
-    setDuration(results.routes[0].legs[0].distance.value);
+    setDistance(currentRoute.distance.text);
+    setDuration(currentRoute.duration.text);
+    setTravel_stops(currentRoute.steps[0].transit.arrival_stop.name);
   };
 
-  if (isLoaded) {
+  if (!isLoaded) {
     return <div>Loading..</div>;
   }
   return (
@@ -72,8 +81,9 @@ function Home() {
         </Search>
 
         <Container>
-          <h4>Distance:</h4>
-          <h4>Duration:</h4>
+          <h4>Distance: {distance}</h4>
+          <h4>Duration: {duration}</h4>
+          <h4>Stop: {travel_stops}</h4>
         </Container>
 
         <GoogleMap
@@ -110,4 +120,3 @@ const Search = styled.div`
     cursor: pointer;
   }
 `;
-
