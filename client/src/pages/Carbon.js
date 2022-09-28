@@ -11,7 +11,6 @@ function Carbon() {
     googleMapsApiKey: "AIzaSyCvr2cHZzcc77lX8WgKqRWGBn8wzrdXIAA",
     libraries: ["places"],
   });
- 
 
   // --------- Hooks --------- //
   const [directionRes, setDirectionRes] = useState(null);
@@ -34,27 +33,12 @@ function Carbon() {
       origin: origin.current.value,
       destination: destination.current.value,
       travelMode: google.maps.TravelMode.TRANSIT,
-      //   waypoints: [
-      //     {
-      //       location: new google.maps.LatLng(48.864716, 2.349014),
-      //       stopover: true,
-      //     },
-      //   ],
       transitOptions: {
         modes: [google.maps.TransitMode.TRAIN],
       },
     });
     console.log(results);
     const currentRoute = results.routes[0].legs[0];
-    //   for (let i = 0; i < currentRoute.steps.length; i++) {
-    //       if (currentRoute.steps[i].transit.travelMode === "TRAIN") {
-    //         console.log(currentRoute.steps[i].transit.arrival_stop);
-    //     }
-      
-    // }
-
-    // To set specific stops you have to add waypoints within your results object.
-
     console.log(currentRoute.steps[0].transit.arrival_stop.name);
     setDirectionRes(results);
     setDistance(currentRoute.distance.text);

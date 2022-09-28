@@ -1,52 +1,68 @@
-// import { useEffect } from “react”;
+import { React, useRef } from "react";
+import styled from "styled-components";
+import SearchIcon from "@mui/icons-material/Search";
+import { Autocomplete } from "@react-google-maps/api";
+import { useJsApiLoader } from "@react-google-maps/api";
 
-//  <form>
-//  <label>
-//    Name:
-//    <input type="text" name="name" />
-//  </label>
-//  <input type="submit" value="Submit" />
-// </form>
- 
+function Home() {
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: "AIzaSyCvr2cHZzcc77lX8WgKqRWGBn8wzrdXIAA",
+    libraries: ["places"],
+  });
 
- import React from 'react';
+  const origin = useRef();
+  const destination = useRef();
 
-  function Home(props) {
-    const handleSubmit= (e) => {
-      e.preventDefault();
-      // ???
-    }
-  
-    return (
-      <form onSubmit={e => {handleSubmit(e)}}>
-        <label>From: </label>
-        <br />
-        <input 
-          name='choreDesc' 
-          type='text'
-        />
-        <br/>
-        <label>To: </label>
-        <br />
-        <input 
-          name='userName' 
-          type='text' 
-        />
-        <br />
-        <label>Date</label>
-        <br />
-        <input
-          name='dt' 
-          type='date'
-        />
-        <br/>
-        <input 
-          className='submitButton'
-          type='submit' 
-          value='Submit' 
-        />
-      </form>
-    )
+  // ----- Check if API is loading ----- //
+
+  if (!isLoaded) {
+    return <div>Loading..</div>;
   }
 
-  export default Home;
+  const setRoute = async () => {
+    if (origin.current.value === "" || destination.current.value === "") {
+      return;
+    }
+    // we want to redirect to /carbon with origin.current.value and destination.c.v
+    // props.origin.current.value
+  };
+
+  return (
+    <Search>
+      <Autocomplete>
+        <input
+          type="text"
+          id="outlined-basic"
+          label="From"
+          variant="outlined"
+          size="small"
+          ref={origin}
+        />
+      </Autocomplete>
+      <Autocomplete>
+        <input
+          type="text"
+          id="outlined-basic"
+          label="To"
+          variant="outlined"
+          size="small"
+          ref={destination}
+        />
+      </Autocomplete>
+
+      <SearchIcon type="submit" onClick={setRoute} />
+    </Search>
+  );
+}
+
+export default Home;
+
+const Search = styled.div`
+  padding: 4px;
+  background-color: transparent;
+  display: flex;
+
+  > .MuiSvgIcon-root {
+    cursor: pointer;
+  }
+`;
