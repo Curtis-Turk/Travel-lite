@@ -7,14 +7,13 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import TrainIcon from "@mui/icons-material/Train";
 import PublicIcon from "@mui/icons-material/Public";
 
-
 function Carbon() {
   const center = { lat: 51.597656, lng: -0.172282 };
-  //  ------ Load API ----- //
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: `${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`,
+    googleMapsApiKey: "AIzaSyCvr2cHZzcc77lX8WgKqRWGBn8wzrdXIAA",
     libraries: ["places"],
   });
+
   // --------- Hooks --------- //
   const [directionRes, setDirectionRes] = useState(null);
   const [distance, setDistance] = useState("");
@@ -22,6 +21,7 @@ function Carbon() {
   const [travel_stops, setTravel_stops] = useState("");
   const origin = useRef();
   const destination = useRef();
+
 
   // --------- Calculate route Api data ---------//
   const calculateRoute = async () => {
@@ -36,40 +36,25 @@ function Carbon() {
       origin: origin.current.value,
       destination: destination.current.value,
       travelMode: google.maps.TravelMode.TRANSIT,
-      //   waypoints: [
-      //     {
-      //       location: new google.maps.LatLng(48.864716, 2.349014),
-      //       stopover: true,
-      //     },
-      //   ],
       transitOptions: {
         modes: [google.maps.TransitMode.TRAIN],
       },
     });
     console.log(results);
     const currentRoute = results.routes[0].legs[0];
-    //   for (let i = 0; i < currentRoute.steps.length; i++) {
-    //       if (currentRoute.steps[i].transit.travelMode === "TRAIN") {
-    //         console.log(currentRoute.steps[i].transit.arrival_stop);
-    //     }
-
-    // }
-
-    // To set specific stops you have to add waypoints within your results object.
-
-    console.log(currentRoute.steps[0].transit.arrival_stop.name);
-    console.log(currentRoute);
     setDirectionRes(results);
     setDistance(currentRoute.distance.text);
     setDuration(currentRoute.duration.text);
     setTravel_stops(currentRoute.steps[0].transit.arrival_stop.name);
   };
 
+
   // ----- Check if API is loading ----- //
 
   if (!isLoaded) {
     return <div>Loading..</div>;
   }
+
 
   // ----- Render JSX ---- //
   return (
@@ -144,5 +129,3 @@ function Carbon() {
 }
 
 export default Carbon;
-
-// ----- Styled components (CSS) ------ //
