@@ -11,6 +11,7 @@ import Carbon from "./pages/Carbon";
 function App() {
   let activeClassName = "nav-active";
   return (
+    <>
     <Router>
       <nav>
         <NavLink
@@ -30,7 +31,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="carbon" element={<Carbon />} />
       </Routes>
-    </Router>
+      </Router>
+      </>
   );
 }
 

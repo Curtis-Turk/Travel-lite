@@ -6,11 +6,12 @@ import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import TrainIcon from "@mui/icons-material/Train";
 import PublicIcon from "@mui/icons-material/Public";
+import "../index.css";
 
 function Carbon() {
   const center = { lat: 51.597656, lng: -0.172282 };
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyCvr2cHZzcc77lX8WgKqRWGBn8wzrdXIAA",
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
     libraries: ["places"],
   });
 
@@ -21,7 +22,6 @@ function Carbon() {
   const [travel_stops, setTravel_stops] = useState("");
   const origin = useRef();
   const destination = useRef();
-
 
   // --------- Calculate route Api data ---------//
   const calculateRoute = async () => {
@@ -48,13 +48,11 @@ function Carbon() {
     setTravel_stops(currentRoute.steps[0].transit.arrival_stop.name);
   };
 
-
   // ----- Check if API is loading ----- //
 
   if (!isLoaded) {
     return <div>Loading..</div>;
   }
-
 
   // ----- Render JSX ---- //
   return (
