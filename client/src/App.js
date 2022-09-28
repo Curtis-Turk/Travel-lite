@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
 import Home from "./pages/Home";
-import Form from "./pages/Form";
+import Carbon from "./pages/Carbon";
 
 
 function App() {
@@ -10,11 +10,11 @@ function App() {
     <Router>
     <nav> 
         <NavLink to="/" className={({ isActive }) => isActive && activeClassName}>Home </NavLink>
-        <NavLink to="form" className={({ isActive }) => isActive && activeClassName}>Form </NavLink>
+        <NavLink to="carbon" className={({ isActive }) => isActive && activeClassName}>Carbon </NavLink>
       </nav>
       <Routes>
          <Route path="/" element={<Home />} />
-         <Route path="form" element={<Form />} />
+         <Route path="carbon" element={<Carbon />} />
       </Routes>
     </Router>
   );
