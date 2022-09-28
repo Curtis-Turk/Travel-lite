@@ -83,40 +83,41 @@ function Carbon() {
           <SearchIcon type="submit" onClick={calculateRoute} />
         </div>
 
-        <div class="flex justify-center pt-10">
-          <table class="">
+        <div className="flex justify-center pt-10">
+          <table className="">
             <thead>
               <tr>
-                <th class=""></th>
-                <th class="">
+                <th className=""></th>
+                <th className="">
                   <PublicIcon />
                 </th>
-                <th class="">
+                <th className="">
                   <AccessTimeIcon />
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr className="border-b-2 border-black">
-                <td class="w-20 text-center">
+                <td className="w-20 text-center">
                   <FlightTakeoffIcon />{" "}
                 </td>
-                <td class="w-48 h-20 text-center">{distance} Co2</td>
-                <td class="w-48 h-20 text-center">{duration} hours</td>
+                <td className="w-48 h-20 text-center">{distance} Co2</td>
+                <td className="w-48 h-20 text-center">{duration} hours</td>
               </tr>
 
-              <td class="text-center">
+              <td className="text-center">
                 <TrainIcon />
               </td>
-              <td class="w-48 h-20 text-center">{distance} miles</td>
-              <td class="w-48 h-20 text-center">{duration} hours</td>
+              <td className="w-48 h-20 text-center">{distance} miles</td>
+              <td className="w-48 h-20 text-center">{duration} hours</td>
             </tbody>
           </table>
         </div>
+
         <GoogleMap
           center={center}
-          zoom={15}
-          mapContainerStyle={{ width: "50%", height: "50%" }}
+          zoom={12}
+          mapContainerClassName="w-full h-screen"
         >
           <Marker position={center} />
           {directionRes && <DirectionsRenderer directions={directionRes} />}
