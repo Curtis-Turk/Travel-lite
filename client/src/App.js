@@ -1,8 +1,14 @@
-import Home from "./pages/Home";
+import Carbon from "./pages/Carbon";
+
 
 
 function App() {
-  return <Home />;
+  return (
+    <>
+    <Carbon />;
+    </>
+  )
+
 }
 
 export default App;

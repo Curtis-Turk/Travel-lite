@@ -1,15 +1,18 @@
 import { useState, useRef } from "react";
-import styled from "styled-components";
 import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
 import SearchIcon from "@mui/icons-material/Search";
-import Container from "@mui/material/Container";
 import { Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
+import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import TrainIcon from "@mui/icons-material/Train";
+import PublicIcon from "@mui/icons-material/Public";
 
-function Home() {
+
+function Carbon() {
   const center = { lat: 51.597656, lng: -0.172282 };
   //  ------ Load API ----- //
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    googleMapsApiKey: `${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`,
     libraries: ["places"],
   });
   // --------- Hooks --------- //
@@ -49,12 +52,13 @@ function Home() {
     //       if (currentRoute.steps[i].transit.travelMode === "TRAIN") {
     //         console.log(currentRoute.steps[i].transit.arrival_stop);
     //     }
-      
+
     // }
 
     // To set specific stops you have to add waypoints within your results object.
 
     console.log(currentRoute.steps[0].transit.arrival_stop.name);
+    console.log(currentRoute);
     setDirectionRes(results);
     setDistance(currentRoute.distance.text);
     setDuration(currentRoute.duration.text);
@@ -70,8 +74,8 @@ function Home() {
   // ----- Render JSX ---- //
   return (
     <>
-      <Maps>
-        <Search>
+      <div className="">
+        <div className="flex justify-center">
           <Autocomplete>
             <input
               type="text"
@@ -94,47 +98,51 @@ function Home() {
           </Autocomplete>
 
           <SearchIcon type="submit" onClick={calculateRoute} />
-        </Search>
+        </div>
 
-        <Container>
-          <h4>Distance: {distance}</h4>
-          <h4>Duration: {duration}</h4>
-          <h4>Stop: {travel_stops}</h4>
-        </Container>
+        <div class="flex justify-center pt-10">
+          <table class="">
+            <thead>
+              <tr>
+                <th class=""></th>
+                <th class="">
+                  <PublicIcon />
+                </th>
+                <th class="">
+                  <AccessTimeIcon />
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-b-2 border-black">
+                <td class="w-20 text-center">
+                  <FlightTakeoffIcon />{" "}
+                </td>
+                <td class="w-48 h-20 text-center">{distance} Co2</td>
+                <td class="w-48 h-20 text-center">{duration} hours</td>
+              </tr>
 
+              <td class="text-center">
+                <TrainIcon />
+              </td>
+              <td class="w-48 h-20 text-center">{distance} miles</td>
+              <td class="w-48 h-20 text-center">{duration} hours</td>
+            </tbody>
+          </table>
+        </div>
         <GoogleMap
           center={center}
           zoom={15}
-          mapContainerStyle={{ width: "100%", height: "97%" }}
+          mapContainerStyle={{ width: "50%", height: "50%" }}
         >
           <Marker position={center} />
           {directionRes && <DirectionsRenderer directions={directionRes} />}
         </GoogleMap>
-      </Maps>
+      </div>
     </>
   );
 }
 
-export default Home;
+export default Carbon;
 
 // ----- Styled components (CSS) ------ //
-
-const Maps = styled.div`
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 100%;
-`;
-
-const Search = styled.div`
-  padding: 4px;
-  background-color: transparent;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  > .MuiSvgIcon-root {
-    cursor: pointer;
-  }
-`;
