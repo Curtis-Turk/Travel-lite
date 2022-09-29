@@ -22,7 +22,6 @@ function Home() {
   }
 
   const setRoute = () => {
-    console.log(origin.current)
     if (origin.current.value === "" || destination.current.value === "") {
       return;
     }
@@ -36,22 +35,23 @@ function Home() {
   };
 
   return (
-    <div>
-      <h1 class="flex justify-center font-bold">Where would you like to go?</h1>
-      <br></br>
+    <div className="">
+      <h1 className="flex justify-center font-bold pb-4">Where would you like to go?</h1>
       <div className="flex justify-center ">
-        <Autocomplete>
-          <input
-            type="text"
-            id="outlined-basic"
-            label="From"
-            variant="outlined"
-            size="small"
-            placeholder="From"
-            ref={origin}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-        </Autocomplete>
+        <div className="pr-3">
+          <Autocomplete>
+            <input
+              type="text"
+              id="outlined-basic"
+              label="From"
+              variant="outlined"
+              size="small"
+              placeholder="From"
+              ref={origin}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+          </Autocomplete>
+        </div>
         <Autocomplete>
           <input
             type="text"
@@ -64,10 +64,12 @@ function Home() {
             className="p-4 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </Autocomplete>
-        <SearchIcon type="submit" onClick={setRoute} />
+        <div className="pl-2 pt-2">
+          <SearchIcon className="hover:text-gray-400 cursor-pointer" type="submit" onClick={setRoute} />
+          </div>
       </div>
-      <div class="flex justify-center">
-        <img src={world} alt="World" class="w-3/4 h-auto"></img>
+      <div className="flex justify-center">
+        <img src={world} alt="World" className="object-contain w-3/4 h-96"></img>
       </div>
     </div>
   );

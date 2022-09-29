@@ -21,6 +21,8 @@ function Carbon() {
       updateMap(location.state.origin, location.state.destination);
     }
   }, [location.state]);
+
+  // --------- Load API ---------//
   const center = { lat: 51.597656, lng: -0.172282 };
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -37,7 +39,6 @@ function Carbon() {
   const [steps, setSteps] = useState("");
 
   // -------- Update Map and Calculate Route ---------- //
-
   const updateMap = async (origin, destination) => {
     const google = window.google;
     const directionsService = new google.maps.DirectionsService();
@@ -62,10 +63,10 @@ function Carbon() {
 
     const stepList = arr.map((item, index) => {
       return (
-        <li className="flex list-none" key={index}>
+        <li className="flex list-none pt-2 pr-4" key={index}>
           <img
             alt=""
-            className="w-10 h-10 "
+            className="w-8 h-8 "
             src={require("../../src/pin.png")}
           ></img>
           {item}
@@ -82,14 +83,15 @@ function Carbon() {
 
     if (distanceK != null && distanceK < 1000) {
       totalPlaneEmissions += 255 * distanceK;
+      setPlaneEmissions(totalPlaneEmissions.toFixed(2))
     } else if (distanceK != null && distanceK > 1000) {
       totalPlaneEmissions += 240 * distanceK;
-      setPlaneEmissions(totalPlaneEmissions);
+      setPlaneEmissions(totalPlaneEmissions.toFixed(2));
     }
 
     if (distanceK != null) {
       totalTrainEmissions += 41 * distanceK;
-      setTrainEmissions(totalTrainEmissions);
+      setTrainEmissions(totalTrainEmissions.toFixed(2));
     }
 
     setDirectionRes(results);
@@ -99,7 +101,6 @@ function Carbon() {
   };
 
   // ----- Check if API is loading ----- //
-
   if (!isLoaded) {
     return <div>Loading..</div>;
   }
@@ -112,8 +113,8 @@ function Carbon() {
           <table className="">
             <thead>
               <tr>
-                <th className=""></th>
-                <th className="">
+                <th></th>
+                <th>
                   <PublicIcon /> CO₂
                 </th>
                 <th className="">
@@ -126,14 +127,14 @@ function Carbon() {
                 <td className="w-20 text-center">
                   <FlightTakeoffIcon />{" "}
                 </td>
-                <td className="w-48 h-20 text-center">{planeEmissions} </td>
+                <td className="w-48 h-20 text-center text-red-500">{planeEmissions} </td>
                 <td className="w-48 h-20 text-center">{distance} </td>
               </tr>
 
               <td className="text-center">
                 <TrainIcon />
               </td>
-              <td className="w-48 h-20 text-center">{trainEmissions} </td>
+              <td className="w-48 h-20 text-center  text-green-400">{trainEmissions} </td>
               <td className="w-48 h-20 text-center">{distance} </td>
             </tbody>
           </table>
@@ -150,19 +151,24 @@ function Carbon() {
         </div>
 
         <div className="pt-6 flex justify-center">
-          <h3 className="text-green-600 underline font-poppins ">
+          <h3 className="text-green-600 underline font-poppins pb-4 font-bold ">
             Your Trip Details
           </h3>
         </div>
-        <div className="flex justify-center">
-          {locationA}
-          <span>
-            <ArrowRightAltIcon />
-          </span>
-          {locationB}
+        <div className="flex justify-center pb-2">
+          <p>
+            {locationA}
+            <span>
+              <ArrowRightAltIcon />
+              <ArrowRightAltIcon />
+              <ArrowRightAltIcon />
+              <ArrowRightAltIcon />
+            </span>
+            {locationB}
+          </p>
         </div>
         <div className="flex justify-center">
-          <ul className="list-none">{steps}</ul>
+          <ul className=" flex list-none">{steps}</ul>
         </div>
       </div>
     </>
