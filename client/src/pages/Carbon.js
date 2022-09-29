@@ -1,11 +1,27 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
 import SearchIcon from "@mui/icons-material/Search";
 import Container from "@mui/material/Container";
 import { Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
+import {useLocation} from 'react-router-dom';
 
 function Carbon() {
+  const location = useLocation(); //get parameters from input homepage
+  const [originValue, setOriginValue] = useState("");
+  const [destinationValue, setDestinationValue] = useState("");
+  useEffect(() => {
+ 
+    // console.log("Calling this");
+    if (location.state != null) {
+      setOriginValue(location.state.origin);
+      setDestinationValue(location.state.destination);
+      // console.log(location.state);
+      updateMap(location.state.origin,location.state.destination);
+    }
+
+  }, [location.state]);
+  
   const center = { lat: 51.597656, lng: -0.172282 };
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: "AIzaSyCvr2cHZzcc77lX8WgKqRWGBn8wzrdXIAA",
@@ -22,17 +38,20 @@ function Carbon() {
   const destination = useRef();
 
   // --------- Calculate route Api data ---------//
-  const calculateRoute = async () => {
-    if (origin.current.value === "" || destination.current.value === "") {
-      return;
-    }
+  const calculateRoute = () => {
+      if (origin.current.value === "" || destination.current.value === "") {
+        return;
+      }
+      updateMap(origin.current.value,destination.current.value);
+  }
 
+  const updateMap = async (origin, destination) => {
     const google = window.google;
     const directionsService = new google.maps.DirectionsService();
 
     const results = await directionsService.route({
-      origin: origin.current.value,
-      destination: destination.current.value,
+      origin: origin,
+      destination: destination,
       travelMode: google.maps.TravelMode.TRANSIT,
       //   waypoints: [
       //     {
@@ -70,7 +89,7 @@ function Carbon() {
 
   // ----- Render JSX ---- //
   return (
-    <>
+    <> 
       <Maps>
         <Search>
           <Autocomplete>
@@ -81,6 +100,7 @@ function Carbon() {
               variant="outlined"
               size="small"
               ref={origin}
+              defaultValue={originValue} 
             />
           </Autocomplete>
           <Autocomplete>
@@ -91,9 +111,9 @@ function Carbon() {
               variant="outlined"
               size="small"
               ref={destination}
+              defaultValue={destinationValue}
             />
           </Autocomplete>
-
           <SearchIcon type="submit" onClick={calculateRoute} />
         </Search>
 
