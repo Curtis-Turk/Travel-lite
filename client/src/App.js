@@ -10,26 +10,26 @@ import Carbon from "./pages/Carbon";
 import AboutUs from "./pages/AboutUs";
 
 function App() {
-  let activeClassName = "nav-active";
+  // let activeClassName = "nav-active";
   return (
     <>
       <Router>
         <nav>
           <NavLink
             to="/"
-            className={({ isActive }) => isActive && activeClassName}
+            // className={({ isActive }) => isActive && activeClassName}
           >
             Home{" "}
           </NavLink>
           <NavLink
             to="/carbon"
-            className={({ isActive }) => isActive && activeClassName}
+            // className={({ isActive }) => isActive && activeClassName}
           >
             Carbon{" "}
           </NavLink>
           <NavLink
             to="/aboutus"
-            className={({ isActive }) => isActive && activeClassName}
+            // className={({ isActive }) => isActive && activeClassName}
           >
             About us{" "}
           </NavLink>
