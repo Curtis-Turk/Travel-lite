@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import styled from "styled-components";
 import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
 import SearchIcon from "@mui/icons-material/Search";
 import { Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
@@ -8,8 +9,23 @@ import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import TrainIcon from "@mui/icons-material/Train";
 import PublicIcon from "@mui/icons-material/Public";
 import "../index.css";
+import {useLocation, useNavigate} from 'react-router-dom';
 
 function Carbon() {
+  const location = useLocation(); //get parameters from input homepage
+  const [originValue, setOriginValue] = useState("");
+  const [destinationValue, setDestinationValue] = useState("");
+  useEffect(() => {
+ 
+    // console.log("Calling this");
+    if (location.state != null) {
+      setOriginValue(location.state.origin);
+      setDestinationValue(location.state.destination);
+      // console.log(location.state);
+      updateMap(location.state.origin,location.state.destination);
+    }
+
+  }, [location.state]);
   const center = { lat: 51.597656, lng: -0.172282 };
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -26,17 +42,20 @@ function Carbon() {
   const destination = useRef();
 
   // --------- Calculate route Api data ---------//
-  const calculateRoute = async () => {
-    if (origin.current.value === "" || destination.current.value === "") {
-      return;
-    }
+  const calculateRoute = () => {
+      if (origin.current.value === "" || destination.current.value === "") {
+        return;
+      }
+      updateMap(origin.current.value,destination.current.value);
+  }
 
+  const updateMap = async (origin, destination) => {
     const google = window.google;
     const directionsService = new google.maps.DirectionsService();
 
     const results = await directionsService.route({
-      origin: origin.current.value,
-      destination: destination.current.value,
+      origin: origin,
+      destination: destination,
       travelMode: google.maps.TravelMode.TRANSIT,
       transitOptions: {
         modes: [google.maps.TransitMode.TRAIN],
@@ -72,6 +91,7 @@ function Carbon() {
               size="small"
               ref={origin}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              defaultValue={originValue} 
             />
           </Autocomplete>
           <Autocomplete>
@@ -83,9 +103,9 @@ function Carbon() {
               size="small"
               ref={destination}
               className="p-4 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              defaultValue={destinationValue}
             />
           </Autocomplete>
-
           <SearchIcon type="submit" onClick={calculateRoute} />
         </div>
 

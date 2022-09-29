@@ -1,10 +1,12 @@
-import { React, useRef } from "react";
-import styled from "styled-components";
-import SearchIcon from "@mui/icons-material/Search";
-import { Autocomplete } from "@react-google-maps/api";
-import { useJsApiLoader } from "@react-google-maps/api";
+ import { React, useRef } from "react";
+ import SearchIcon from "@mui/icons-material/Search";
+ import { Autocomplete } from "@react-google-maps/api";
+ import { useNavigate } from 'react-router-dom';
+ import { useJsApiLoader} from "@react-google-maps/api";
 
-function Home() {
+
+ function Home() {
+
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: "AIzaSyCvr2cHZzcc77lX8WgKqRWGBn8wzrdXIAA",
     libraries: ["places"],
@@ -12,6 +14,7 @@ function Home() {
 
   const origin = useRef();
   const destination = useRef();
+  const navigate = useNavigate();
 
   // ----- Check if API is loading ----- //
 
@@ -23,12 +26,13 @@ function Home() {
     if (origin.current.value === "" || destination.current.value === "") {
       return;
     }
-    // we want to redirect to /carbon with origin.current.value and destination.c.v
-    // props.origin.current.value
+
+    navigate( '/carbon',{ state:{origin: origin.current.value, destination: destination.current.value }}) 
+   
   };
 
   return (
-    <Search>
+    <div>
       <Autocomplete>
         <input
           type="text"
@@ -51,17 +55,9 @@ function Home() {
       </Autocomplete>
 
       <SearchIcon type="submit" onClick={setRoute} />
-    </Search>
+    </div>
   );
 }
 
 export default Home;
 
-const Search = styled.div`
-  padding: 4px;
-  background-color: transparent;
-  display: flex;
-  > .MuiSvgIcon-root {
-    cursor: pointer;
-  }
-`;
