@@ -1,14 +1,12 @@
- import { React, useRef } from "react";
- import SearchIcon from "@mui/icons-material/Search";
- import { Autocomplete } from "@react-google-maps/api";
- import { useNavigate } from 'react-router-dom';
- import { useJsApiLoader} from "@react-google-maps/api";
+import { React, useRef } from "react";
+import SearchIcon from "@mui/icons-material/Search";
+import { Autocomplete } from "@react-google-maps/api";
+import { useNavigate } from "react-router-dom";
+import { useJsApiLoader } from "@react-google-maps/api";
 
-
- function Home() {
-
+function Home() {
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyCvr2cHZzcc77lX8WgKqRWGBn8wzrdXIAA",
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
     libraries: ["places"],
   });
 
@@ -27,8 +25,12 @@
       return;
     }
 
-    navigate( '/carbon',{ state:{origin: origin.current.value, destination: destination.current.value }}) 
-   
+    navigate("/carbon", {
+      state: {
+        origin: origin.current.value,
+        destination: destination.current.value,
+      },
+    });
   };
 
   return (
@@ -60,4 +62,3 @@
 }
 
 export default Home;
-

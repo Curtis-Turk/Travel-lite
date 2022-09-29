@@ -12,27 +12,34 @@ function App() {
   let activeClassName = "nav-active";
   return (
     <>
-    <Router>
-      <nav>
-        <NavLink
-          to="/"
-          className={({ isActive }) => isActive && activeClassName}
-        >
-          Home{" "}
-        </NavLink>
-        <NavLink
-          to="carbon"
-          className={({ isActive }) => isActive && activeClassName}
-        >
-          Carbon{" "}
-        </NavLink>
-      </nav>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="carbon" element={<Carbon />} />
-      </Routes>
+      <Router>
+        <nav>
+          <ul>
+            <li>
+              {" "}
+              <NavLink
+                to="/"
+                className={({ isActive }) => isActive && activeClassName}
+              >
+                Home{" "}
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/carbon"
+                className={({ isActive }) => isActive && activeClassName}
+              >
+                Carbon{" "}
+              </NavLink>
+            </li>
+          </ul>
+        </nav>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/carbon" element={<Carbon />} />
+        </Routes>
       </Router>
-      </>
+    </>
   );
 }
 
