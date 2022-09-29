@@ -1,9 +1,18 @@
-import React from 'react'
+import React from 'react';
+import { BrowserRouter, Route, Link } from "react-router-dom";
 
 function Navigation() {
+  
   return (
-    <div>Navigation</div>
+    <nav>
+    <li>
+      <Link to="/">Home</Link>
+    </li>
+    <li>
+      <Link to="/carbon">Carbon</Link>
+    </li>
+  </nav>
   )
 }
 
-export default Navigation
+export default Navigation;
