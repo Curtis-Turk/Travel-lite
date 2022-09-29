@@ -4,7 +4,7 @@ import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
 import SearchIcon from "@mui/icons-material/Search";
 import Container from "@mui/material/Container";
 import { Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
-import {useLocation} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 
 function Carbon() {
   const location = useLocation(); //get parameters from input homepage
@@ -21,7 +21,6 @@ function Carbon() {
     }
 
   }, [location.state]);
-  
   const center = { lat: 51.597656, lng: -0.172282 };
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: "AIzaSyCvr2cHZzcc77lX8WgKqRWGBn8wzrdXIAA",
