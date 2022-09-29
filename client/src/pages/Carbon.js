@@ -1,13 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import styled from "styled-components";
 import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
-import SearchIcon from "@mui/icons-material/Search";
 import { Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import TrainIcon from "@mui/icons-material/Train";
 import PublicIcon from "@mui/icons-material/Public";
+import RouteIcon from '@mui/icons-material/Route';
 import "../index.css";
 import {useLocation, useNavigate} from 'react-router-dom';
 
@@ -16,28 +14,27 @@ function Carbon() {
   const [originValue, setOriginValue] = useState("");
   const [destinationValue, setDestinationValue] = useState("");
   useEffect(() => {
- 
-    // console.log("Calling this");
     if (location.state != null) {
       setOriginValue(location.state.origin);
       setDestinationValue(location.state.destination);
-      // console.log(location.state);
-      updateMap(location.state.origin,location.state.destination);
+      updateMap(location.state.origin, location.state.destination);
+      
     }
-
   }, [location.state]);
   const center = { lat: 51.597656, lng: -0.172282 };
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    googleMapsApiKey: "AIzaSyA5gOdPhcI8D-BWsZGtGNV13XeftTmogZg",
     libraries: ["places"],
   });
 
   // --------- Hooks --------- //
   const [directionRes, setDirectionRes] = useState(null);
   const [distance, setDistance] = useState("");
-  const [duration, setDuration] = useState("");
+  const [planeEmissions, setPlaneEmissions] = useState("");
+  const [trainEmissions, setTrainEmissions] = useState("");
   const [locationA, setLocationA] = useState("");
   const [locationB, setLocationB] = useState("");
+  const [steps, setSteps] = useState("")
   const origin = useRef();
   const destination = useRef();
 
@@ -61,12 +58,41 @@ function Carbon() {
         modes: [google.maps.TransitMode.TRAIN],
       },
     });
-    console.log(results);
-    console.log(results.request.destination.query);
+    
     const currentRoute = results.routes[0].legs[0];
+    let arr = []
+    currentRoute.steps.forEach((step) => {
+      const string = step.instructions.replaceAll("Train towards", " ").replaceAll("Walk to", " ")
+      console.log(string)
+      arr.push(string)
+      console.log(arr)
+    })
+
+    const stepList = arr.map((item, index) => {
+      return <li className="flex list-none" key={index}><img className="w-10 h-10 " src={require('../../src/pin.png')}></img>{item}</li>
+    })
+
+    setSteps(stepList)
+    
+    let distanceM = results.routes[0].legs[0].distance.value;
+    let distanceK = distanceM * 0.001;
+    let totalPlaneEmissions = 0;
+    let totalTrainEmissions = 0;
+
+    if (distanceK != null && distanceK < 1000) {
+      totalPlaneEmissions += 255 * distanceK 
+    } else if (distanceK != null && distanceK > 1000) {
+      totalPlaneEmissions += 240 * distanceK
+      setPlaneEmissions(totalPlaneEmissions)
+    }
+
+    if (distanceK != null) {
+      totalTrainEmissions += 41 * distanceK
+      setTrainEmissions(totalTrainEmissions)
+    }
+    
     setDirectionRes(results);
     setDistance(currentRoute.distance.text);
-    setDuration(currentRoute.duration.text);
     setLocationA(results.request.origin.query);
     setLocationB(results.request.destination.query); 
   };
@@ -81,44 +107,17 @@ function Carbon() {
   return (
     <>
       <div className="">
-        <div className="flex justify-center ">
-          <Autocomplete>
-            <input
-              type="text"
-              id="outlined-basic"
-              label="From"
-              variant="outlined"
-              size="small"
-              ref={origin}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              defaultValue={originValue} 
-            />
-          </Autocomplete>
-          <Autocomplete>
-            <input
-              type="text"
-              id="outlined-basic"
-              label="To"
-              variant="outlined"
-              size="small"
-              ref={destination}
-              className="p-4 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              defaultValue={destinationValue}
-            />
-          </Autocomplete>
-          <SearchIcon type="submit" onClick={calculateRoute} />
-        </div>
-
+        
         <div className="flex justify-center pt-10">
           <table className="">
             <thead>
               <tr>
                 <th className=""></th>
                 <th className="">
-                  <PublicIcon /> Co2
+                  <PublicIcon /> CO₂
                 </th>
                 <th className="">
-                  <AccessTimeIcon /> Time
+                  <RouteIcon /> Distance
                 </th>
               </tr>
             </thead>
@@ -127,28 +126,29 @@ function Carbon() {
                 <td className="w-20 text-center">
                   <FlightTakeoffIcon />{" "}
                 </td>
+                <td className="w-48 h-20 text-center">{planeEmissions} </td>
                 <td className="w-48 h-20 text-center">{distance} </td>
-                <td className="w-48 h-20 text-center">{duration} </td>
               </tr>
 
               <td className="text-center">
                 <TrainIcon />
               </td>
+              <td className="w-48 h-20 text-center">{trainEmissions} </td>
               <td className="w-48 h-20 text-center">{distance} </td>
-              <td className="w-48 h-20 text-center">{duration} </td>
             </tbody>
           </table>
-        </div>
-        <div className="flex justify-center">
+            </div>
+        <div className="flex justify-center pt-6">
           <GoogleMap
             center={center}
             zoom={12}
-            mapContainerClassName="w-9/12 h-96 rounded-lg"
+            mapContainerClassName="w-8/12 h-96 rounded-lg"
           >
             <Marker position={center} />
             {directionRes && <DirectionsRenderer directions={directionRes} />}
           </GoogleMap>
-        </div>
+            </div>
+
         <div className="pt-6 flex justify-center">
           <h3 className="text-green-600 underline font-poppins ">
             Your Trip Details
@@ -157,6 +157,13 @@ function Carbon() {
         <div className="flex justify-center">
           {locationA} <span><ArrowRightAltIcon /></span> {locationB}
         </div>
+        <div className="flex justify-center">
+          <ul className="list-none">
+            {steps}
+          </ul>
+        </div>
+        
+
       </div>
     </>
   );

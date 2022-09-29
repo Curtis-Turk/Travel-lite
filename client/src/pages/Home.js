@@ -7,7 +7,7 @@ import world from "../images/world.png";
 
 function Home() {
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    googleMapsApiKey: "AIzaSyA5gOdPhcI8D-BWsZGtGNV13XeftTmogZg",
     libraries: ["places"],
   });
 
@@ -21,7 +21,8 @@ function Home() {
     return <div>Loading..</div>;
   }
 
-  const setRoute = async () => {
+  const setRoute = () => {
+    console.log(origin.current)
     if (origin.current.value === "" || destination.current.value === "") {
       return;
     }
