@@ -3,10 +3,11 @@ import SearchIcon from "@mui/icons-material/Search";
 import { Autocomplete } from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";
 import { useJsApiLoader } from "@react-google-maps/api";
+import world from "../images/world.png";
 
 function Home() {
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    googleMapsApiKey: "AIzaSyA5gOdPhcI8D-BWsZGtGNV13XeftTmogZg",
     libraries: ["places"],
   });
 
@@ -20,7 +21,8 @@ function Home() {
     return <div>Loading..</div>;
   }
 
-  const setRoute = async () => {
+  const setRoute = () => {
+    console.log(origin.current)
     if (origin.current.value === "" || destination.current.value === "") {
       return;
     }
@@ -35,28 +37,38 @@ function Home() {
 
   return (
     <div>
-      <Autocomplete>
-        <input
-          type="text"
-          id="outlined-basic"
-          label="From"
-          variant="outlined"
-          size="small"
-          ref={origin}
-        />
-      </Autocomplete>
-      <Autocomplete>
-        <input
-          type="text"
-          id="outlined-basic"
-          label="To"
-          variant="outlined"
-          size="small"
-          ref={destination}
-        />
-      </Autocomplete>
-
-      <SearchIcon type="submit" onClick={setRoute} />
+      <h1 class="flex justify-center font-bold">Where would you like to go?</h1>
+      <br></br>
+      <div className="flex justify-center ">
+        <Autocomplete>
+          <input
+            type="text"
+            id="outlined-basic"
+            label="From"
+            variant="outlined"
+            size="small"
+            placeholder="From"
+            ref={origin}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </Autocomplete>
+        <Autocomplete>
+          <input
+            type="text"
+            id="outlined-basic"
+            label="To"
+            variant="outlined"
+            size="small"
+            placeholder="To"
+            ref={destination}
+            className="p-4 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          />
+        </Autocomplete>
+        <SearchIcon type="submit" onClick={setRoute} />
+      </div>
+      <div class="flex justify-center">
+        <img src={world} alt="World" class="w-3/4 h-auto"></img>
+      </div>
     </div>
   );
 }

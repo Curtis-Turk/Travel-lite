@@ -7,36 +7,37 @@ import {
 } from "react-router-dom";
 import Home from "./pages/Home";
 import Carbon from "./pages/Carbon";
+import AboutUs from "./pages/AboutUs";
 
 function App() {
-  let activeClassName = "nav-active";
+  // let activeClassName = "nav-active";
   return (
     <>
       <Router>
         <nav>
-          <ul>
-            <li>
-              {" "}
-              <NavLink
-                to="/"
-                className={({ isActive }) => isActive && activeClassName}
-              >
-                Home{" "}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/carbon"
-                className={({ isActive }) => isActive && activeClassName}
-              >
-                Carbon{" "}
-              </NavLink>
-            </li>
-          </ul>
+          <NavLink
+            to="/"
+            // className={({ isActive }) => isActive && activeClassName}
+          >
+            Home{" "}
+          </NavLink>
+          <NavLink
+            to="/carbon"
+            // className={({ isActive }) => isActive && activeClassName}
+          >
+            Carbon{" "}
+          </NavLink>
+          <NavLink
+            to="/aboutus"
+            // className={({ isActive }) => isActive && activeClassName}
+          >
+            About us{" "}
+          </NavLink>
         </nav>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/carbon" element={<Carbon />} />
+          <Route path="/aboutus" element={<AboutUs />} />
         </Routes>
       </Router>
     </>
