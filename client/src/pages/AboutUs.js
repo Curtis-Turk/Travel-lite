@@ -14,25 +14,24 @@ function AboutUs() {
       <br></br>
       <h2>Why we chose this?</h2>
       <p>
-        This project endeavors to help reduce our Carbon Footprint by adopting
-        reduced carbon travel habits
+        This project endeavors to help reduce the impact on the environment by
+        adopting reduced carbon travel habits
       </p>
       <br></br>
       <h2>How does it work?</h2>
       <p>
         To help inspire people to choose alternatives to plane travel our site
-        will give insights into the impacts of different methods of transport.
-        Whilst also giving some inspiration for an adventure to have along the
-        way.
+        will give insights into the different methods of transport. Whilst also
+        giving some inspiration for an adventure to have along the way.
       </p>
       <br></br>
       <h2>Meet the team</h2>
-      <div>
-        <img src={eve} alt="Evelina" />
-        <img src={alex} alt="Alexandra" />
-        <img src={brij} alt="Brijesh" />
-        <img src={curt} alt="Curtis" />
-        <img src={syed} alt="Syed" />
+      <div class="container flex">
+        <img class="w-1/5" src={eve} alt="Evelina" />
+        <img class="w-1/5" src={alex} alt="Alexandra" />
+        <img class="w-1/5" src={brij} alt="Brijesh" />
+        <img class="w-1/5" src={curt} alt="Curtis" />
+        <img class="w-1/5" src={syed} alt="Syed" />
       </div>
     </div>
   );
