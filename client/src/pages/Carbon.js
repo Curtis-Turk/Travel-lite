@@ -1,29 +1,29 @@
-import { useState, useRef, useEffect } from "react";
-import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
-import { Autocomplete, DirectionsRenderer } from "@react-google-maps/api";
+import { useState, useEffect } from "react";
+import {
+  useJsApiLoader,
+  GoogleMap,
+  Marker,
+  DirectionsRenderer,
+} from "@react-google-maps/api";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
-import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import TrainIcon from "@mui/icons-material/Train";
 import PublicIcon from "@mui/icons-material/Public";
-import RouteIcon from '@mui/icons-material/Route';
+import RouteIcon from "@mui/icons-material/Route";
 import "../index.css";
-import {useLocation, useNavigate} from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
 function Carbon() {
   const location = useLocation(); //get parameters from input homepage
-  const [originValue, setOriginValue] = useState("");
-  const [destinationValue, setDestinationValue] = useState("");
+
   useEffect(() => {
     if (location.state != null) {
-      setOriginValue(location.state.origin);
-      setDestinationValue(location.state.destination);
       updateMap(location.state.origin, location.state.destination);
-      
     }
   }, [location.state]);
   const center = { lat: 51.597656, lng: -0.172282 };
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyA5gOdPhcI8D-BWsZGtGNV13XeftTmogZg",
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
     libraries: ["places"],
   });
 
@@ -34,17 +34,9 @@ function Carbon() {
   const [trainEmissions, setTrainEmissions] = useState("");
   const [locationA, setLocationA] = useState("");
   const [locationB, setLocationB] = useState("");
-  const [steps, setSteps] = useState("")
-  const origin = useRef();
-  const destination = useRef();
+  const [steps, setSteps] = useState("");
 
-  // --------- Calculate route Api data ---------//
-  const calculateRoute = () => {
-      if (origin.current.value === "" || destination.current.value === "") {
-        return;
-      }
-      updateMap(origin.current.value,destination.current.value);
-  }
+  // -------- Update Map and Calculate Route ---------- //
 
   const updateMap = async (origin, destination) => {
     const google = window.google;
@@ -58,43 +50,52 @@ function Carbon() {
         modes: [google.maps.TransitMode.TRAIN],
       },
     });
-    
+
     const currentRoute = results.routes[0].legs[0];
-    let arr = []
+    let arr = [];
     currentRoute.steps.forEach((step) => {
-      const string = step.instructions.replaceAll("Train towards", " ").replaceAll("Walk to", " ")
-      console.log(string)
-      arr.push(string)
-      console.log(arr)
-    })
+      const string = step.instructions
+        .replaceAll("Train towards", " ")
+        .replaceAll("Walk to", " ");
+      arr.push(string);
+    });
 
     const stepList = arr.map((item, index) => {
-      return <li className="flex list-none" key={index}><img className="w-10 h-10 " src={require('../../src/pin.png')}></img>{item}</li>
-    })
+      return (
+        <li className="flex list-none" key={index}>
+          <img
+            alt=""
+            className="w-10 h-10 "
+            src={require("../../src/pin.png")}
+          ></img>
+          {item}
+        </li>
+      );
+    });
 
-    setSteps(stepList)
-    
+    setSteps(stepList);
+
     let distanceM = results.routes[0].legs[0].distance.value;
     let distanceK = distanceM * 0.001;
     let totalPlaneEmissions = 0;
     let totalTrainEmissions = 0;
 
     if (distanceK != null && distanceK < 1000) {
-      totalPlaneEmissions += 255 * distanceK 
+      totalPlaneEmissions += 255 * distanceK;
     } else if (distanceK != null && distanceK > 1000) {
-      totalPlaneEmissions += 240 * distanceK
-      setPlaneEmissions(totalPlaneEmissions)
+      totalPlaneEmissions += 240 * distanceK;
+      setPlaneEmissions(totalPlaneEmissions);
     }
 
     if (distanceK != null) {
-      totalTrainEmissions += 41 * distanceK
-      setTrainEmissions(totalTrainEmissions)
+      totalTrainEmissions += 41 * distanceK;
+      setTrainEmissions(totalTrainEmissions);
     }
-    
+
     setDirectionRes(results);
     setDistance(currentRoute.distance.text);
     setLocationA(results.request.origin.query);
-    setLocationB(results.request.destination.query); 
+    setLocationB(results.request.destination.query);
   };
 
   // ----- Check if API is loading ----- //
@@ -107,7 +108,6 @@ function Carbon() {
   return (
     <>
       <div className="">
-        
         <div className="flex justify-center pt-10">
           <table className="">
             <thead>
@@ -137,7 +137,7 @@ function Carbon() {
               <td className="w-48 h-20 text-center">{distance} </td>
             </tbody>
           </table>
-            </div>
+        </div>
         <div className="flex justify-center pt-6">
           <GoogleMap
             center={center}
@@ -147,7 +147,7 @@ function Carbon() {
             <Marker position={center} />
             {directionRes && <DirectionsRenderer directions={directionRes} />}
           </GoogleMap>
-            </div>
+        </div>
 
         <div className="pt-6 flex justify-center">
           <h3 className="text-green-600 underline font-poppins ">
@@ -155,15 +155,15 @@ function Carbon() {
           </h3>
         </div>
         <div className="flex justify-center">
-          {locationA} <span><ArrowRightAltIcon /></span> {locationB}
+          {locationA}
+          <span>
+            <ArrowRightAltIcon />
+          </span>
+          {locationB}
         </div>
         <div className="flex justify-center">
-          <ul className="list-none">
-            {steps}
-          </ul>
+          <ul className="list-none">{steps}</ul>
         </div>
-        
-
       </div>
     </>
   );
