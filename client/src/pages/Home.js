@@ -7,7 +7,7 @@ import world from "../images/world.png";
 
 function Home() {
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyA5gOdPhcI8D-BWsZGtGNV13XeftTmogZg",
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
     libraries: ["places"],
   });
 
