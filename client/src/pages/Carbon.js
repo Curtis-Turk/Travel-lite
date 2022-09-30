@@ -42,6 +42,36 @@ function Carbon() {
   const updateMap = async (origin, destination) => {
     const google = window.google;
     const directionsService = new google.maps.DirectionsService();
+    const service = new google.maps.places.PlacesService();
+    const geocoder = new google.maps.Geocoder();
+
+    let lat;
+    let long;
+    await geocoder.geocode(
+      { address: "Paris" },
+      function (results, status) {
+        if (status === google.maps.GeocoderStatus.OK) {
+          lat = results[0].geometry.location.lat();
+          long = results[0].geometry.location.lng();
+        } else {
+          return "Could not retrieve coordinates for: location";
+        }
+      }
+    );
+    
+    const location = new google.maps.LatLng(lat, long);
+    const request = {
+      location: location,
+      radius: "200",
+      type: ["restaurant"],
+    };
+    console.log(request);
+
+    service.nearbySearch(request, function (response, status) {
+      if (status === google.maps.places.PlacesServiceStatus.OK) {
+        console.log(response);
+      }
+    });
 
     const results = await directionsService.route({
       origin: origin,
@@ -83,7 +113,7 @@ function Carbon() {
 
     if (distanceK != null && distanceK < 1000) {
       totalPlaneEmissions += 255 * distanceK;
-      setPlaneEmissions(totalPlaneEmissions.toFixed(2))
+      setPlaneEmissions(totalPlaneEmissions.toFixed(2));
     } else if (distanceK != null && distanceK > 1000) {
       totalPlaneEmissions += 240 * distanceK;
       setPlaneEmissions(totalPlaneEmissions.toFixed(2));
@@ -127,14 +157,18 @@ function Carbon() {
                 <td className="w-20 text-center">
                   <FlightTakeoffIcon />{" "}
                 </td>
-                <td className="w-48 h-20 text-center text-red-500">{planeEmissions} </td>
+                <td className="w-48 h-20 text-center text-red-500">
+                  {planeEmissions}{" "}
+                </td>
                 <td className="w-48 h-20 text-center">{distance} </td>
               </tr>
 
               <td className="text-center">
                 <TrainIcon />
               </td>
-              <td className="w-48 h-20 text-center  text-green-400">{trainEmissions} </td>
+              <td className="w-48 h-20 text-center  text-green-400">
+                {trainEmissions}{" "}
+              </td>
               <td className="w-48 h-20 text-center">{distance} </td>
             </tbody>
           </table>
