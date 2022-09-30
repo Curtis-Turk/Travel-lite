@@ -22,6 +22,10 @@ function Home() {
   }
 
   const setRoute = () => {
+<<<<<<< HEAD
+=======
+    console.log("origin", origin.current);
+>>>>>>> 010d54f (Testing carbon calculator)
     if (origin.current.value === "" || destination.current.value === "") {
       return;
     }
