@@ -22,10 +22,7 @@ function Home() {
   }
 
   const setRoute = () => {
-<<<<<<< HEAD
-=======
-    console.log("origin", origin.current);
->>>>>>> 010d54f (Testing carbon calculator)
+    // console.log("origin", origin.current);
     if (origin.current.value === "" || destination.current.value === "") {
       return;
     }
@@ -40,7 +37,9 @@ function Home() {
 
   return (
     <div className="">
-      <h1 className="flex justify-center font-bold pb-4">Where would you like to go?</h1>
+      <h1 className="flex justify-center font-bold pb-4">
+        Where would you like to go?
+      </h1>
       <div className="flex justify-center ">
         <div className="pr-3">
           <Autocomplete>
@@ -69,11 +68,19 @@ function Home() {
           />
         </Autocomplete>
         <div className="pl-2 pt-2">
-          <SearchIcon className="hover:text-gray-400 cursor-pointer" type="submit" onClick={setRoute} />
-          </div>
+          <SearchIcon
+            className="hover:text-gray-400 cursor-pointer"
+            type="submit"
+            onClick={setRoute}
+          />
+        </div>
       </div>
       <div className="flex justify-center">
-        <img src={world} alt="World" className="object-contain w-3/4 h-96"></img>
+        <img
+          src={world}
+          alt="World"
+          className="object-contain w-3/4 h-96"
+        ></img>
       </div>
     </div>
   );
