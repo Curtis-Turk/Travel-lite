@@ -12,6 +12,8 @@ import PublicIcon from "@mui/icons-material/Public";
 import RouteIcon from "@mui/icons-material/Route";
 import "../index.css";
 import { useLocation } from "react-router-dom";
+import { attractionSearch } from "../components/nearby.js";
+import axios from "axios";
 
 function Carbon() {
   const location = useLocation(); //get parameters from input homepage
@@ -37,6 +39,7 @@ function Carbon() {
   const [locationA, setLocationA] = useState("");
   const [locationB, setLocationB] = useState("");
   const [steps, setSteps] = useState("");
+  const [imgs, setImgs] = useState();
 
   // -------- Update Map and Calculate Route ---------- //
   const updateMap = async (origin, destination) => {
@@ -47,31 +50,43 @@ function Carbon() {
 
     let lat;
     let long;
-    await geocoder.geocode(
-      { address: "Paris" },
-      function (results, status) {
-        if (status === google.maps.GeocoderStatus.OK) {
-          lat = results[0].geometry.location.lat();
-          long = results[0].geometry.location.lng();
-        } else {
-          return "Could not retrieve coordinates for: location";
-        }
-      }
-    );
-    
-    const location = new google.maps.LatLng(lat, long);
-    const request = {
-      location: location,
-      radius: "200",
-      type: ["restaurant"],
-    };
-    console.log(request);
-
-    service.nearbySearch(request, function (response, status) {
-      if (status === google.maps.places.PlacesServiceStatus.OK) {
-        console.log(response);
+    await geocoder.geocode({ address: " paris" }, function (results, status) {
+      if (status === google.maps.GeocoderStatus.OK) {
+        lat = results[0].geometry.location.lat();
+        long = results[0].geometry.location.lng();
+      } else {
+        return "Could not retrieve coordinates for: location";
       }
     });
+
+    const options = {
+      method: "GET",
+      url: "https://travel-advisor.p.rapidapi.com/attractions/list-by-latlng",
+      params: {
+        longitude: long,
+        latitude: lat,
+        lunit: "km",
+        currency: "USD",
+        lang: "en_US",
+      },
+      headers: {
+        "X-RapidAPI-Key": "a5d45dc314mshbffd3a0c065adaap12158fjsn1eaf022a708a",
+        "X-RapidAPI-Host": "travel-advisor.p.rapidapi.com",
+      },
+    };
+
+    axios
+      .request(options)
+      .then(function (response) {
+        // console.log(response.data.data)
+        response.data.data.forEach((place) =>
+          console.log(response.data.data)
+          // setImgs(place.photo.images.small.url)
+        );
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
 
     const results = await directionsService.route({
       origin: origin,
@@ -86,8 +101,8 @@ function Carbon() {
     let arr = [];
     currentRoute.steps.forEach((step) => {
       const string = step.instructions
-        .replaceAll("Train towards", " ")
-        .replaceAll("Walk to", " ");
+        .replaceAll("Train towards", "")
+        .replaceAll("Walk to", "");
       arr.push(string);
     });
 
@@ -186,7 +201,7 @@ function Carbon() {
 
         <div className="pt-6 flex justify-center">
           <h3 className="text-green-600 underline font-poppins pb-4 font-bold ">
-            Your Trip Details
+            Your Trip Details <img src={imgs} alt="" />
           </h3>
         </div>
         <div className="flex justify-center pb-2">
