@@ -108,7 +108,7 @@ function Carbon() {
   // ----- Render JSX ---- //
   return (
     <>
-      <div className="">
+      <div className="font-mono">
         <div className="flex justify-center pt-10">
           <table className="">
             <thead>
@@ -151,7 +151,7 @@ function Carbon() {
         </div>
 
         <div className="pt-6 flex justify-center">
-          <h3 className="text-green-600 underline font-poppins pb-4 font-bold ">
+          <h3 className="text-green-600 underline pb-4 font-bold ">
             Your Trip Details
           </h3>
         </div>

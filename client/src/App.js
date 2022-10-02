@@ -14,7 +14,7 @@ function App() {
   return (
     <>
       <Router>
-        <nav>
+        <nav className="font-mono">
           <NavLink
             to="/"
             // className={({ isActive }) => isActive && activeClassName}
@@ -38,6 +38,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/carbon" element={<Carbon />} />
           <Route path="/aboutus" element={<AboutUs />} />
+          
         </Routes>
       </Router>
     </>

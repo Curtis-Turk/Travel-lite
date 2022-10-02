@@ -35,8 +35,8 @@ function Home() {
   };
 
   return (
-    <div className="">
-      <h1 className="flex justify-center font-bold pb-4">Where would you like to go?</h1>
+    <div className="font-mono mt-36">
+      <h1 className="flex justify-center font-bold pb-4 text-2xl">Where would you like to go?</h1>
       <div className="flex justify-center ">
         <div className="pr-3">
           <Autocomplete>
@@ -69,7 +69,10 @@ function Home() {
           </div>
       </div>
       <div className="flex justify-center">
-        <img src={world} alt="World" className="object-contain w-3/4 h-96"></img>
+        <img src={world} alt="World" className="object-contain w-1/3 h-1/3"></img>
+      </div>
+      <div className="flex justify-center text-xl">
+        <p>Plan your adventure, see more of the world, save the planet...</p>
       </div>
     </div>
   );
