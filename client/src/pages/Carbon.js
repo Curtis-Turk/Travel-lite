@@ -139,6 +139,7 @@ function Carbon() {
             </tbody>
           </table>
         </div>
+        <div className="w-full">
         <div className="flex justify-center pt-6">
           <GoogleMap
             center={center}
@@ -148,6 +149,7 @@ function Carbon() {
             <Marker position={center} />
             {directionRes && <DirectionsRenderer directions={directionRes} />}
           </GoogleMap>
+        </div>
         </div>
 
         <div className="pt-6 flex justify-center">

@@ -8,7 +8,7 @@ import team from "../images/team.png";
 function AboutUs() {
   return (
     <div className="flex justify-center mt-24">
-      <div className="bg-zinc-100 border rounded-3xl flex justify-center box-border h-2/3 w-2/5 p-4">
+      <div className="bg-zinc-100 border rounded-3xl flex justify-center box-border h-2/3 w-2/5 p-4 mb-20">
         <div className="font-mono">
           <div className="flex justify-center">
             <img

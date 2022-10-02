@@ -17,7 +17,7 @@ function Facts() {
               <br></br>That's the equivalent of:
             </h1>
             <p className="text-2xl mb-10 mt-20">
-              <img className="inline w-24 mr-5" src={ecobulb} alt="Eco Bulb" /> Using
+              <img className="inline w-24" src={ecobulb} alt="Eco Bulb" /> Using
               __ lightbulbs
             </p>
             <p className="text-right text-2xl mb-10 mt-20">
