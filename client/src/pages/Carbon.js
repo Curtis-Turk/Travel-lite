@@ -12,8 +12,8 @@ import PublicIcon from "@mui/icons-material/Public";
 import RouteIcon from "@mui/icons-material/Route";
 import "../index.css";
 import { useLocation } from "react-router-dom";
-import { attractionSearch } from "../components/nearby.js";
 import axios from "axios";
+import { trainCalculator, planeCalculator } from "../components/CarbonCalc";
 
 function Carbon() {
   const location = useLocation(); //get parameters from input homepage
@@ -33,7 +33,8 @@ function Carbon() {
 
   // --------- Hooks --------- //
   const [directionRes, setDirectionRes] = useState(null);
-  const [distance, setDistance] = useState("");
+  const [trainDistance, setTrainDistance] = useState("");
+  const [planeDistance, setPlaneDistance] = useState("");
   const [planeEmissions, setPlaneEmissions] = useState("");
   const [trainEmissions, setTrainEmissions] = useState("");
   const [locationA, setLocationA] = useState("");
@@ -44,51 +45,10 @@ function Carbon() {
   // -------- Update Map and Calculate Route ---------- //
   const updateMap = async (origin, destination) => {
     const google = window.google;
+
+    // Navigation
     const directionsService = new google.maps.DirectionsService();
-    const service = new google.maps.places.PlacesService();
-    const geocoder = new google.maps.Geocoder();
-
-    let lat;
-    let long;
-    await geocoder.geocode({ address: " paris" }, function (results, status) {
-      if (status === google.maps.GeocoderStatus.OK) {
-        lat = results[0].geometry.location.lat();
-        long = results[0].geometry.location.lng();
-      } else {
-        return "Could not retrieve coordinates for: location";
-      }
-    });
-
-    const options = {
-      method: "GET",
-      url: "https://travel-advisor.p.rapidapi.com/attractions/list-by-latlng",
-      params: {
-        longitude: long,
-        latitude: lat,
-        lunit: "km",
-        currency: "USD",
-        lang: "en_US",
-      },
-      headers: {
-        "X-RapidAPI-Key": "a5d45dc314mshbffd3a0c065adaap12158fjsn1eaf022a708a",
-        "X-RapidAPI-Host": "travel-advisor.p.rapidapi.com",
-      },
-    };
-
-    axios
-      .request(options)
-      .then(function (response) {
-        // console.log(response.data.data)
-        response.data.data.forEach((place) =>
-          console.log(response.data.data)
-          // setImgs(place.photo.images.small.url)
-        );
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
-
-    const results = await directionsService.route({
+    const navigation = await directionsService.route({
       origin: origin,
       destination: destination,
       travelMode: google.maps.TravelMode.TRANSIT,
@@ -96,17 +56,23 @@ function Carbon() {
         modes: [google.maps.TransitMode.TRAIN],
       },
     });
+    setDirectionRes(navigation);
 
-    const currentRoute = results.routes[0].legs[0];
-    let arr = [];
+    setLocationA(navigation.request.origin.query);
+    setLocationB(navigation.request.destination.query);
+
+    // --------- Get navigation steps --------- //
+    const currentRoute = navigation.routes[0].legs[0];
+
+    let stepArr = [];
     currentRoute.steps.forEach((step) => {
       const string = step.instructions
         .replaceAll("Train towards", "")
         .replaceAll("Walk to", "");
-      arr.push(string);
+      stepArr.push(string);
     });
 
-    const stepList = arr.map((item, index) => {
+    const stepList = stepArr.map((item, index) => {
       return (
         <li className="flex list-none pt-2 pr-4" key={index}>
           <img
@@ -118,31 +84,85 @@ function Carbon() {
         </li>
       );
     });
-
     setSteps(stepList);
 
-    let distanceM = results.routes[0].legs[0].distance.value;
-    let distanceK = distanceM * 0.001;
-    let totalPlaneEmissions = 0;
-    let totalTrainEmissions = 0;
+    // --------- Get information about places  --------- //
+    const geocoder = new google.maps.Geocoder();
 
-    if (distanceK != null && distanceK < 1000) {
-      totalPlaneEmissions += 255 * distanceK;
-      setPlaneEmissions(totalPlaneEmissions.toFixed(2));
-    } else if (distanceK != null && distanceK > 1000) {
-      totalPlaneEmissions += 240 * distanceK;
-      setPlaneEmissions(totalPlaneEmissions.toFixed(2));
-    }
+    const geocodeLocation = async (location) => {
+      let latlngObj = {};
+      await geocoder.geocode({ address: location }, (results, status) => {
+        if (status === google.maps.GeocoderStatus.OK) {
+          latlngObj = {
+            lat: results[0].geometry.location.lat(),
+            lng: results[0].geometry.location.lng(),
+          };
+        } else {
+          return "Could not retrieve coordinates for: location";
+        }
+      });
+      return latlngObj;
+    };
 
-    if (distanceK != null) {
-      totalTrainEmissions += 41 * distanceK;
-      setTrainEmissions(totalTrainEmissions.toFixed(2));
-    }
+    const locationOptions = (locationLatLong) => {
+      return {
+        method: "GET",
+        url: "https://travel-advisor.p.rapidapi.com/attractions/list-by-latlng",
+        params: {
+          longitude: locationLatLong.lng,
+          latitude: locationLatLong.lat,
+          lunit: "km",
+          currency: "USD",
+          lang: "en_US",
+        },
+        headers: {
+          "X-RapidAPI-Key":
+            "a5d45dc314mshbffd3a0c065adaap12158fjsn1eaf022a708a",
+          "X-RapidAPI-Host": "travel-advisor.p.rapidapi.com",
+        },
+      };
+    };
 
-    setDirectionRes(results);
-    setDistance(currentRoute.distance.text);
-    setLocationA(results.request.origin.query);
-    setLocationB(results.request.destination.query);
+    geocodeLocation("paris").then((data) =>
+      axios
+        .request(locationOptions(data))
+        .then((response) => {
+          response.data.data.forEach((place) =>
+            setImgs(place.photo.images.small.url)
+          );
+        })
+        .catch((error) => {
+          console.error(error);
+        })
+    );
+
+    // console.log(options);
+
+    // --------- Work out plane distance + emissions --------- //
+    const planeDistanceCalc = async () => {
+      return [
+        await geocodeLocation(origin),
+        await geocodeLocation(destination),
+      ];
+    };
+    planeDistanceCalc().then(
+      (data) =>
+        setPlaneDistance(
+          Math.round(
+            google.maps.geometry.spherical.computeDistanceBetween(
+              data[0],
+              data[1]
+            ) / 1000
+          )
+        ),
+      setPlaneEmissions(planeCalculator(planeDistance))
+    );
+
+    // --------- Work out train distance + emissions --------- //
+    setTrainDistance(currentRoute.distance.text);
+    let trainDistanceKM = navigation.routes[0].legs[0].distance.value / 1000;
+
+    setTrainEmissions(Math.round(trainCalculator(trainDistanceKM)));
   };
 
   // ----- Check if API is loading ----- //
@@ -175,7 +195,7 @@ function Carbon() {
                 <td className="w-48 h-20 text-center text-red-500">
                   {planeEmissions}{" "}
                 </td>
-                <td className="w-48 h-20 text-center">{distance} </td>
+                <td className="w-48 h-20 text-center">{planeDistance} km</td>
               </tr>
 
               <td className="text-center">
@@ -184,7 +204,7 @@ function Carbon() {
               <td className="w-48 h-20 text-center  text-green-400">
                 {trainEmissions}{" "}
               </td>
-              <td className="w-48 h-20 text-center">{distance} </td>
+              <td className="w-48 h-20 text-center">{trainDistance} </td>
             </tbody>
           </table>
         </div>
