@@ -136,8 +136,6 @@ function Carbon() {
         })
     );
 
-    // console.log(options);
-
     // --------- Work out plane distance + emissions --------- //
     const planeDistanceCalc = async () => {
       return [
