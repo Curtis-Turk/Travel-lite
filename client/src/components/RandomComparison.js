@@ -9,4 +9,7 @@ const randomComparisonFunction = (co2) => {
 // notes
 // boiling a kettle 15g
 // cup of coffee 150g
-// heating home for a month 400000
+// heating home for a month 400000g
+// google search 0.2g
+// Using a desktop computer for a year 686
+// Streaming a song 55g

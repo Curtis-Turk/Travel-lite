@@ -56,8 +56,8 @@ function Carbon() {
         modes: [google.maps.TransitMode.TRAIN],
       },
     });
-    setDirectionRes(navigation);
 
+    setDirectionRes(navigation);
     setLocationA(navigation.request.origin.query);
     setLocationB(navigation.request.destination.query);
 
@@ -146,12 +146,12 @@ function Carbon() {
     planeDistanceCalc().then(
       (data) =>
         setPlaneDistance(
-          Math.round(
+          (
             google.maps.geometry.spherical.computeDistanceBetween(
               data[0],
               data[1]
             ) / 1000
-          )
+          ).toFixed()
         ),
       setPlaneEmissions(planeCalculator(planeDistance))
     );
