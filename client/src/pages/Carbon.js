@@ -40,7 +40,7 @@ function Carbon() {
   const [locationA, setLocationA] = useState("");
   const [locationB, setLocationB] = useState("");
   const [steps, setSteps] = useState("");
-  const [imgs, setImgs] = useState();
+  const [imgs, setImgs] = useState("");
 
   useEffect(() => {
     setPlaneEmissions(planeCalculator(planeDistance));
@@ -67,30 +67,32 @@ function Carbon() {
 
     // --------- Get navigation steps --------- //
     const currentRoute = navigation.routes[0].legs[0];
-
     let stepArr = [];
+
     currentRoute.steps.forEach((step) => {
-      const string = step.instructions
-        .replaceAll("Train towards", "")
-        .replaceAll("Walk to", "");
-      stepArr.push(string);
+      if (step.travel_mode === "TRANSIT") {
+        stepArr.push(step.transit.arrival_stop.name);
+      }
     });
 
     const stepList = stepArr.map((item, index) => {
       return (
         <li className="flex list-none pt-2 pr-4" key={index}>
+          {index + 1}
           <img
             alt=""
             className="w-8 h-8 "
             src={require("../../src/pin.png")}
           ></img>
+
           {item}
+          {/* <img className="flex" alt="stop info-pic" src={imgs}></img> */}
         </li>
       );
     });
     setSteps(stepList);
 
-    // --------- Get information about places  --------- //
+    // --------- GeoCoder  --------- //
     const geocoder = new google.maps.Geocoder();
 
     const geocodeLocation = async (location) => {
@@ -108,6 +110,7 @@ function Carbon() {
       return latlngObj;
     };
 
+    // --------- Get information about places  --------- //
     const locationOptions = (locationLatLong) => {
       return {
         method: "GET",
@@ -120,26 +123,52 @@ function Carbon() {
           lang: "en_US",
         },
         headers: {
-          "X-RapidAPI-Key":
-            "a5d45dc314mshbffd3a0c065adaap12158fjsn1eaf022a708a",
+          "X-RapidAPI-Key": process.env.REACT_APP_TRAVEL_ADVISORAPI,
           "X-RapidAPI-Host": "travel-advisor.p.rapidapi.com",
         },
       };
+    };
+
+    const getRandomInt = (min, max) => {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min) + min);
     };
 
     geocodeLocation("paris").then((data) =>
       axios
         .request(locationOptions(data))
         .then((response) => {
-          response.data.data.forEach((place) =>
-            setImgs(place.photo.images.small.url)
-          );
+          let rdmIndex = getRandomInt(0, response.data.data.length);
+          setImgs(response.data.data[rdmIndex].photo.images.small.url);
         })
         .catch((error) => {
           console.error(error);
         })
     );
+    // const getImageUrls = () => {
+    //   let imgUrlArr = [];
 
+    //   stepArr.forEach((step) => {
+    //     geocodeLocation(step).then((data) =>
+    //       axios
+    //         .request(locationOptions(data))
+    //         .then((response) => {
+    //           let rdmIndex = getRandomInt(0, response.data.data.length);
+    //           imgUrlArr.push(
+    //             response.data.data[rdmIndex].photo.images.small.url
+    //           );
+    //           console.log(imgUrlArr, "Image Arr");
+    //         })
+    //         .catch((error) => {
+    //           console.log(error, "Test");
+    //         })
+    //     );
+    //   });
+    // console.log(imgUrlArr);
+    // };
+
+    // getImageUrls();
     // --------- Work out plane distance + emissions --------- //
     const planeDistanceCalc = async () => {
       return [
@@ -175,6 +204,15 @@ function Carbon() {
   return (
     <>
       <div className="font-mono">
+        <div className="flex justify-center pb-2">
+          <h1>
+            <span className="p-6 text-xl">{locationA}</span>
+            <span>
+              <ArrowRightAltIcon />
+            </span>
+            <span className="p-6 text-xl">{locationB}</span>
+          </h1>
+        </div>
         <div className="flex justify-center pt-10">
           <table className="">
             <thead>
@@ -205,7 +243,7 @@ function Carbon() {
               <td className="w-48 h-20 text-center  text-green-400">
                 {trainEmissions} g{" "}
               </td>
-              <td className="w-48 h-20 text-center">{trainDistance} </td>
+              <td className="w-48 h-20 text-center">{trainDistance}</td>
             </tbody>
           </table>
         </div>
@@ -227,18 +265,7 @@ function Carbon() {
             Your Trip Details
           </h3>
         </div>
-        <div className="flex justify-center pb-2">
-          <p>
-            {locationA}
-            <span>
-              <ArrowRightAltIcon />
-              <ArrowRightAltIcon />
-              <ArrowRightAltIcon />
-              <ArrowRightAltIcon />
-            </span>
-            {locationB}
-          </p>
-        </div>
+
         <div className="flex justify-center">
           <ul className=" flex list-none">{steps}</ul>
         </div>
