@@ -13,19 +13,21 @@ import Footer from "./components/Footer";
 import Navigation from "./components/Navigation";
 
 function App() {
-  // let activeClassName = "nav-active";
   return (
     <>
       <Router>
+        {/* Nav Bar */}
         <Navigation />
-        
-         
+
+        {/* Routes */}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/carbon" element={<Carbon />} />
           <Route path="/aboutus" element={<AboutUs />} />
           <Route path="/facts" element={<Facts />} />
         </Routes>
+
+        {/* Footer */}
         <Footer />
       </Router>
     </>

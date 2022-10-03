@@ -84,7 +84,7 @@ function Carbon() {
     const stepList = stepArr.map((item, index) => {
       return (
         <>
-          <Card sx={{ minWidth: 275 }} key={index}>
+          <Card className="pb-5" sx={{ minWidth: 275 }} key={index}>
             <CardContent>
               <Typography
                 sx={{ fontSize: 14 }}
@@ -224,7 +224,7 @@ function Carbon() {
   // ----- Render JSX ---- //
   return (
     <>
-      <div className="font-mono">
+      <div className="font-mono pt-4">
         <div className="flex justify-center pb-2">
           <h1>
             <span className="p-6 text-xl">{locationA}</span>
@@ -268,21 +268,19 @@ function Carbon() {
             </tbody>
           </table>
         </div>
-        <div className="w-full">
-          <div className="flex justify-center pt-6">
-            <GoogleMap
-              center={center}
-              zoom={12}
-              mapContainerClassName="w-8/12 h-96 rounded-lg"
-            >
-              <Marker position={center} />
-              {directionRes && <DirectionsRenderer directions={directionRes} />}
-            </GoogleMap>
-          </div>
+        
+        <div className="flex justify-center pt-6">
+          <GoogleMap
+            center={center}
+            zoom={12}
+            mapContainerClassName="w-10/12 h-96 rounded-lg"
+          >
+            <Marker position={center} />
+            {directionRes && <DirectionsRenderer directions={directionRes} />}
+          </GoogleMap>
         </div>
-
         <div className="pt-6 flex justify-center">
-          <h3 className="text-green-600 underline pb-4 font-bold ">
+          <h3 className="text-black-400 underline pb-4 font-mono ">
             Your Trip Details
           </h3>
         </div>
@@ -290,6 +288,7 @@ function Carbon() {
         <div className="flex justify-center">
           <ul className=" flex list-none">{steps}</ul>
         </div>
+
       </div>
     </>
   );
