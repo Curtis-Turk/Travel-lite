@@ -65,7 +65,7 @@ function Home() {
           />
         </Autocomplete>
         <div className="pl-2 pt-2">
-          <SearchIcon className="hover:text-gray-400 cursor-pointer" type="submit" onClick={setRoute} />
+          <SearchIcon className="hover:text-gray-400 cursor-pointer" type="submit" id="submit_route" onClick={setRoute} />
           </div>
       </div>
       <div className="flex justify-center">
