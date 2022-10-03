@@ -10,10 +10,8 @@ const planeCalculator = (distanceKM) => {
   let totalPlaneEmissions = 0;
 
   if (distanceKM != null && distanceKM < 1000) {
-    console.log("First if");
     totalPlaneEmissions += 255 * distanceKM;
   } else if (distanceKM != null && distanceKM > 1000) {
-    console.log("Second if");
     totalPlaneEmissions += 240 * distanceKM;
   }
   return totalPlaneEmissions;

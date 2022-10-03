@@ -42,6 +42,10 @@ function Carbon() {
   const [steps, setSteps] = useState("");
   const [imgs, setImgs] = useState();
 
+  useEffect(() => {
+    setPlaneEmissions(planeCalculator(planeDistance));
+  }, [planeDistance]);
+
   // -------- Update Map and Calculate Route ---------- //
   const updateMap = async (origin, destination) => {
     const google = window.google;
@@ -143,17 +147,16 @@ function Carbon() {
         await geocodeLocation(destination),
       ];
     };
-    planeDistanceCalc().then(
-      (data) =>
-        setPlaneDistance(
-          (
-            google.maps.geometry.spherical.computeDistanceBetween(
-              data[0],
-              data[1]
-            ) / 1000
-          ).toFixed()
-        ),
-      setPlaneEmissions(planeCalculator(planeDistance))
+
+    planeDistanceCalc().then((data) =>
+      setPlaneDistance(
+        (
+          google.maps.geometry.spherical.computeDistanceBetween(
+            data[0],
+            data[1]
+          ) / 1000
+        ).toFixed()
+      )
     );
 
     // --------- Work out train distance + emissions --------- //
@@ -191,7 +194,7 @@ function Carbon() {
                   <FlightTakeoffIcon />{" "}
                 </td>
                 <td className="w-48 h-20 text-center text-red-500">
-                  {planeEmissions}{" "}
+                  {planeEmissions} g{" "}
                 </td>
                 <td className="w-48 h-20 text-center">{planeDistance} km</td>
               </tr>
@@ -200,23 +203,23 @@ function Carbon() {
                 <TrainIcon />
               </td>
               <td className="w-48 h-20 text-center  text-green-400">
-                {trainEmissions}{" "}
+                {trainEmissions} g{" "}
               </td>
               <td className="w-48 h-20 text-center">{trainDistance} </td>
             </tbody>
           </table>
         </div>
         <div className="w-full">
-        <div className="flex justify-center pt-6">
-          <GoogleMap
-            center={center}
-            zoom={12}
-            mapContainerClassName="w-8/12 h-96 rounded-lg"
-          >
-            <Marker position={center} />
-            {directionRes && <DirectionsRenderer directions={directionRes} />}
-          </GoogleMap>
-        </div>
+          <div className="flex justify-center pt-6">
+            <GoogleMap
+              center={center}
+              zoom={12}
+              mapContainerClassName="w-8/12 h-96 rounded-lg"
+            >
+              <Marker position={center} />
+              {directionRes && <DirectionsRenderer directions={directionRes} />}
+            </GoogleMap>
+          </div>
         </div>
 
         <div className="pt-6 flex justify-center">
