@@ -26,12 +26,10 @@ function Home() {
       return;
     }
 
-    navigate("/carbon", {
-      state: {
-        origin: origin.current.value,
-        destination: destination.current.value,
-      },
-    });
+    window.origin = origin.current.value;
+    window.destination = destination.current.value;
+
+    navigate("/carbon");
   };
 
   return (

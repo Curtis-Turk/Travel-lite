@@ -10,6 +10,9 @@ import Carbon from "./pages/Carbon";
 import AboutUs from "./pages/AboutUs";
 import Facts from "./pages/Facts";
 
+window.origin = '';
+window.destination = '';
+
 function App() {
   // let activeClassName = "nav-active";
   return (

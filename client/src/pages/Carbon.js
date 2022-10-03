@@ -11,18 +11,18 @@ import TrainIcon from "@mui/icons-material/Train";
 import PublicIcon from "@mui/icons-material/Public";
 import RouteIcon from "@mui/icons-material/Route";
 import "../index.css";
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { trainCalculator, planeCalculator } from "../components/CarbonCalc";
 
 function Carbon() {
-  const location = useLocation(); //get parameters from input homepage
+  // const location = useLocation(); //get parameters from input homepage
 
   useEffect(() => {
-    if (location.state != null) {
-      updateMap(location.state.origin, location.state.destination);
-    }
-  }, [location.state]);
+    if ((window.origin !== '' && window.destination !== '')) {
+      updateMap(window.origin, window.destination);
+    };
+  }, []);
 
   // --------- Load API ---------//
   const center = { lat: 51.597656, lng: -0.172282 };
@@ -120,9 +120,8 @@ function Carbon() {
           lang: "en_US",
         },
         headers: {
-          "X-RapidAPI-Key":
-            "a5d45dc314mshbffd3a0c065adaap12158fjsn1eaf022a708a",
-          "X-RapidAPI-Host": "travel-advisor.p.rapidapi.com",
+          'X-RapidAPI-Key': process.env.REACT_APP_TRAVEL_ADVISORAPI,
+          'X-RapidAPI-Host': 'travel-advisor.p.rapidapi.com'
         },
       };
     };
