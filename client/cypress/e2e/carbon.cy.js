@@ -19,8 +19,6 @@ describe("Carbon page functionality", () => {
   });
 });
 
-
-
 // Tests for Navigation bar within Carbon page
 
 describe("Navigation should link to navlinks from the home page", () => {
