@@ -27,6 +27,7 @@ function App() {
         </Routes>
 
         {/* Footer */}
+        <br></br>
         <Footer />
       </Router>
     </>

@@ -86,7 +86,7 @@ function Carbon() {
     const stepList = stepArr.map((item, index) => {
       return (
         <>
-          <Card className="pb-5" sx={{ minWidth: 275 }} key={index}>
+          <Card className="pb-4" sx={{ minWidth: 275 }} key={index}>
             <CardContent>
               <Typography
                 sx={{ fontSize: 14 }}
