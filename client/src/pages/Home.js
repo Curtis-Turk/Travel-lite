@@ -35,7 +35,7 @@ function Home() {
   };
 
   return (
-    <div className="font-mono mt-36">
+    <div className="font-mono pt-12">
       <h1 className="flex justify-center font-bold pb-4 text-2xl">Where would you like to go?</h1>
       <div className="flex justify-center ">
         <div className="pr-3">

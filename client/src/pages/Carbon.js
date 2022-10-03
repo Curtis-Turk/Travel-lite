@@ -14,6 +14,12 @@ import "../index.css";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { trainCalculator, planeCalculator } from "../components/CarbonCalc";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import CardMedia from "@mui/material/CardMedia";
 
 function Carbon() {
   const location = useLocation(); //get parameters from input homepage
@@ -77,17 +83,31 @@ function Carbon() {
 
     const stepList = stepArr.map((item, index) => {
       return (
-        <li className="flex list-none pt-2 pr-4" key={index}>
-          {index + 1}
-          <img
-            alt=""
-            className="w-8 h-8 "
-            src={require("../../src/pin.png")}
-          ></img>
-
-          {item}
-          {/* <img className="flex" alt="stop info-pic" src={imgs}></img> */}
-        </li>
+        <>
+          <Card sx={{ minWidth: 275 }} key={index}>
+            <CardContent>
+              <Typography
+                sx={{ fontSize: 14 }}
+                color="text.secondary"
+                gutterBottom
+              >
+                {index + 1} - {item}
+              </Typography>
+              <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                Image here
+              </Typography>
+              <CardMedia component="img" height="194" image="" alt="" />
+              <Typography variant="body2">
+                Desription/URL/TripAdvisorLink
+                <br />
+                {'"Review quote"'}
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="small"></Button>
+            </CardActions>
+          </Card>
+        </>
       );
     });
     setSteps(stepList);
@@ -123,7 +143,8 @@ function Carbon() {
           lang: "en_US",
         },
         headers: {
-          "X-RapidAPI-Key": process.env.REACT_APP_TRAVEL_ADVISORAPI,
+          "X-RapidAPI-Key":
+            "8d6efa5f97mshcc1d444e24f8e6ap1b3862jsn7f82f6b9468d",
           "X-RapidAPI-Host": "travel-advisor.p.rapidapi.com",
         },
       };
@@ -243,7 +264,7 @@ function Carbon() {
               <td className="w-48 h-20 text-center  text-green-400">
                 {trainEmissions} g{" "}
               </td>
-              <td className="w-48 h-20 text-center">{trainDistance}</td>
+              <td className="w-48 h-20 text-center">{trainDistance} </td>
             </tbody>
           </table>
         </div>

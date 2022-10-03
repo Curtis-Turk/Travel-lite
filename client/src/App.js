@@ -9,45 +9,24 @@ import Home from "./pages/Home";
 import Carbon from "./pages/Carbon";
 import AboutUs from "./pages/AboutUs";
 import Facts from "./pages/Facts";
+import Footer from "./components/Footer";
+import Navigation from "./components/Navigation";
 
 function App() {
   // let activeClassName = "nav-active";
   return (
     <>
       <Router>
-        <nav className="font-mono">
-          <NavLink
-            to="/"
-            // className={({ isActive }) => isActive && activeClassName}
-          >
-            Home{" "}
-          </NavLink>
-          <NavLink
-            to="/carbon"
-            // className={({ isActive }) => isActive && activeClassName}
-          >
-            Carbon{" "}
-          </NavLink>
-          <NavLink
-            to="/aboutus"
-            // className={({ isActive }) => isActive && activeClassName}
-          >
-            About us{" "}
-          </NavLink>
-          <NavLink
-            to="/facts"
-            // className={({ isActive }) => isActive && activeClassName}
-          >
-            Facts{" "}
-          </NavLink>
-        </nav>
+        <Navigation />
+        
+         
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/carbon" element={<Carbon />} />
           <Route path="/aboutus" element={<AboutUs />} />
           <Route path="/facts" element={<Facts />} />
-          
         </Routes>
+        <Footer />
       </Router>
     </>
   );
