@@ -22,6 +22,7 @@ import Typography from "@mui/material/Typography";
 import CardMedia from "@mui/material/CardMedia";
 
 function Carbon() {
+  const [libraries] = useState(["places"]);
   const location = useLocation(); //get parameters from input homepage
 
   useEffect(() => {
@@ -31,10 +32,11 @@ function Carbon() {
   }, [location.state]);
 
   // --------- Load API ---------//
+
   const center = { lat: 51.597656, lng: -0.172282 };
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-    libraries: ["places"],
+    libraries,
   });
 
   // --------- Hooks --------- //
@@ -90,6 +92,7 @@ function Carbon() {
                 sx={{ fontSize: 14 }}
                 color="text.secondary"
                 gutterBottom
+                id="step_list"
               >
                 {index + 1} - {item}
               </Typography>
@@ -226,7 +229,7 @@ function Carbon() {
     <>
       <div className="font-mono pt-4">
         <div className="flex justify-center pb-2">
-          <h1>
+          <h1 id="location">
             <span className="p-6 text-xl">{locationA}</span>
             <span>
               <ArrowRightAltIcon />
@@ -268,7 +271,7 @@ function Carbon() {
             </tbody>
           </table>
         </div>
-        
+
         <div className="flex justify-center pt-6">
           <GoogleMap
             center={center}
@@ -288,7 +291,6 @@ function Carbon() {
         <div className="flex justify-center">
           <ul className=" flex list-none">{steps}</ul>
         </div>
-
       </div>
     </>
   );

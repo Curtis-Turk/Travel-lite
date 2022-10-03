@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Navigation() {
   return (
@@ -12,22 +12,22 @@ function Navigation() {
         </span>
         <ul class="flex flex-wrap items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
           <li>
-            <Link class="mr-4 hover:bg-gray-200 md:mr-6 " to="/">
+            <Link id="home_link" class="mr-4 hover:bg-gray-200 md:mr-6 " to="/">
               Home
             </Link>
           </li>
           <li>
-            <Link class="mr-4  hover:bg-gray-200 md:mr-6 " to="/carbon">
+            <Link id="carbon_link" class="mr-4  hover:bg-gray-200 md:mr-6 " to="/carbon">
               Carbon
             </Link>
           </li>
           <li>
-            <Link class="mr-4  hover:bg-gray-200 md:mr-6 " to="/facts">
+            <Link id="facts_link" class="mr-4  hover:bg-gray-200 md:mr-6 " to="/facts">
               Facts
             </Link>
           </li>
           <li>
-            <Link class="mr-4  hover:bg-gray-200 md:mr-6 " to="/aboutus">
+            <Link id="about_link" class="mr-4  hover:bg-gray-200 md:mr-6 " to="/aboutus">
               About
             </Link>
           </li>
