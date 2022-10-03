@@ -40,7 +40,7 @@ function Carbon() {
   const [locationA, setLocationA] = useState("");
   const [locationB, setLocationB] = useState("");
   const [steps, setSteps] = useState("");
-  const [imgs, setImgs] = useState();
+  const [imgs, setImgs] = useState([]);
 
   useEffect(() => {
     setPlaneEmissions(planeCalculator(planeDistance));
@@ -120,8 +120,7 @@ function Carbon() {
           lang: "en_US",
         },
         headers: {
-          "X-RapidAPI-Key":
-            "a5d45dc314mshbffd3a0c065adaap12158fjsn1eaf022a708a",
+          "X-RapidAPI-Key": process.env.REACT_APP_TRAVEL_ADVISORAPI,
           "X-RapidAPI-Host": "travel-advisor.p.rapidapi.com",
         },
       };
@@ -131,9 +130,11 @@ function Carbon() {
       axios
         .request(locationOptions(data))
         .then((response) => {
-          response.data.data.forEach((place) =>
-            setImgs(place.photo.images.small.url)
+          response.data.data.forEach(
+            (place) => console.log(place)
+            // setImgs([imgs].concat(place.photo.images.small.url))
           );
+          console.log(imgs);
         })
         .catch((error) => {
           console.error(error);
@@ -205,7 +206,7 @@ function Carbon() {
               <td className="w-48 h-20 text-center  text-green-400">
                 {trainEmissions} g{" "}
               </td>
-              <td className="w-48 h-20 text-center">{trainDistance} </td>
+              <td className="w-48 h-20 text-center">{trainDistance}</td>
             </tbody>
           </table>
         </div>
