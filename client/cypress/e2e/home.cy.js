@@ -6,7 +6,7 @@ describe("Home Page functionality", () => {
   });
 
   it('displays the input field to search "From"', () => {
-    cy.get("#outlined-basic")
+    cy.get("#outlined-basic1")
       .invoke("attr", "placeholder")
       .should("contain", "From");
   });
