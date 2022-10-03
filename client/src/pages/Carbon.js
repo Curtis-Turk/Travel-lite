@@ -171,7 +171,7 @@ function Carbon() {
   // ----- Render JSX ---- //
   return (
     <>
-      <div className="">
+      <div className="font-mono">
         <div className="flex justify-center pt-10">
           <table className="">
             <thead>
@@ -206,6 +206,7 @@ function Carbon() {
             </tbody>
           </table>
         </div>
+        <div className="w-full">
         <div className="flex justify-center pt-6">
           <GoogleMap
             center={center}
@@ -216,10 +217,11 @@ function Carbon() {
             {directionRes && <DirectionsRenderer directions={directionRes} />}
           </GoogleMap>
         </div>
+        </div>
 
         <div className="pt-6 flex justify-center">
-          <h3 className="text-green-600 underline font-poppins pb-4 font-bold ">
-            Your Trip Details <img src={imgs} alt="" />
+          <h3 className="text-green-600 underline pb-4 font-bold ">
+            Your Trip Details
           </h3>
         </div>
         <div className="flex justify-center pb-2">
