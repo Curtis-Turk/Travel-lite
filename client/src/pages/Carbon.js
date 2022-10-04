@@ -91,7 +91,6 @@ function Carbon() {
       }
     });
 
-    console.log(stepArr);
     setSteps(stepArr);
 
     // --------- GeoCoder  --------- //
@@ -109,6 +108,7 @@ function Carbon() {
           return "Could not retrieve coordinates for: location";
         }
       });
+
       return latlngObj;
     };
 
@@ -126,7 +126,7 @@ function Carbon() {
         },
         headers: {
           "X-RapidAPI-Key":
-            "8d6efa5f97mshcc1d444e24f8e6ap1b3862jsn7f82f6b9468d",
+            "b9a2e608eamsh6da9fcbe7b3f84ep1e3c40jsn2484d22a233f",
           "X-RapidAPI-Host": "travel-advisor.p.rapidapi.com",
         },
       };
@@ -138,41 +138,48 @@ function Carbon() {
       return Math.floor(Math.random() * (max - min) + min);
     };
 
-    geocodeLocation("paris").then((data) =>
+   
+    let imgUrlArr = [];
+    stepArr.map((step) => {
+    geocodeLocation(step).then((data) =>
       axios
         .request(locationOptions(data))
         .then((response) => {
           let rdmIndex = getRandomInt(0, response.data.data.length);
-          setImgs(response.data.data[rdmIndex].photo.images.small.url);
+          imgUrlArr.push(response.data.data[rdmIndex].photo.images.small.url);
         })
         .catch((error) => {
           console.error(error);
         })
     );
+    });
 
-    // const getImageUrls = () => {
-    //   let imgUrlArr = [];
+    setTimeout(() => {
+      console.log(imgUrlArr, "set timeout");
+    }, 6000);
+    setImgs(imgUrlArr);
+    
+    console.log(stepArr);
 
-    //   stepArr.forEach((step) => {
-    //     geocodeLocation(step).then((data) =>
-    //       axios
-    //         .request(locationOptions(data))
-    //         .then((response) => {
-    //           let rdmIndex = getRandomInt(0, response.data.data.length);
-    //           imgUrlArr.push(
-    //             response.data.data[rdmIndex].photo.images.small.url
-    //           );
-    //           console.log(imgUrlArr, "Image Arr");
-    //         })
-    //         .catch((error) => {
-    //           console.log(error, "Test");
-    //         })
-    //     );
+    // const imgFunc = () => {
+    //   const imgStops = [];
+    //   stepArr.map((step, index) => {
+    //     imgUrlArr.map((img, imgIdx) => {
+    //       if (index === imgIdx) {
+    //         console.log(step);
+    //         imgStops.push({ stop: step, image: img });
+    //         console.log(imgStops);
+    //       } else {
+    //         console.log("This doesn't work");
+    //       }
+    //     });
     //   });
-    // console.log(imgUrlArr);
+    //   console.log(imgStops);
     // };
 
-    // getImageUrls();
+    // imgFunc();
+
+  
     // --------- Work out plane distance + emissions --------- //
     const planeDistanceCalc = async () => {
       return [
@@ -207,8 +214,6 @@ function Carbon() {
   if (!isLoaded) {
     return <div>Loading..</div>;
   }
-
-  console.log(steps);
 
   // ----- Render JSX ---- //
   return (
@@ -292,7 +297,7 @@ function Carbon() {
                         {index + 1} - {item}
                       </Typography>
                       <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        <img alt="" src={imgs} />
+                        {/* img */}
                       </Typography>
                       <CardMedia component="img" height="194" image="" alt="" />
                       <Typography variant="body2">
