@@ -11,7 +11,6 @@ import TrainIcon from "@mui/icons-material/Train";
 import PublicIcon from "@mui/icons-material/Public";
 import RouteIcon from "@mui/icons-material/Route";
 import "../index.css";
-import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { trainCalculator, planeCalculator } from "../components/CarbonCalc";
 import Card from "@mui/material/Card";
@@ -23,13 +22,6 @@ import CardMedia from "@mui/material/CardMedia";
 
 function Carbon() {
   const [libraries] = useState(["places"]);
-  const location = useLocation(); //get parameters from input homepage
-
-  useEffect(() => {
-    if (location.state != null) {
-      updateMap(location.state.origin, location.state.destination);
-    }
-  }, [location.state]);
 
   // --------- Load API ---------//
 
@@ -47,9 +39,9 @@ function Carbon() {
   const [trainEmissions, setTrainEmissions] = useState("");
   const [locationA, setLocationA] = useState("");
   const [locationB, setLocationB] = useState("");
-  const [steps, setSteps] = useState("");
+  const [steps, setSteps] = useState([]);
 
-  const [imgs, setImgs] = useState();
+  const [imgs, setImgs] = useState([]);
   const [runUpdateMap, setRunUpdateMap] = useState(false);
 
   useEffect(() => {
@@ -99,37 +91,8 @@ function Carbon() {
       }
     });
 
-    const stepList = stepArr.map((item, index) => {
-      return (
-        <>
-          <Card className="pb-4" sx={{ minWidth: 275 }} key={index}>
-            <CardContent>
-              <Typography
-                sx={{ fontSize: 14 }}
-                color="text.secondary"
-                gutterBottom
-                id="step_list"
-              >
-                {index + 1} - {item}
-              </Typography>
-              <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                Image here
-              </Typography>
-              <CardMedia component="img" height="194" image="" alt="" />
-              <Typography variant="body2">
-                Desription/URL/TripAdvisorLink
-                <br />
-                {'"Review quote"'}
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button size="small"></Button>
-            </CardActions>
-          </Card>
-        </>
-      );
-    });
-    setSteps(stepList);
+    console.log(stepArr);
+    setSteps(stepArr);
 
     // --------- GeoCoder  --------- //
     const geocoder = new google.maps.Geocoder();
@@ -162,7 +125,8 @@ function Carbon() {
           lang: "en_US",
         },
         headers: {
-          "X-RapidAPI-Key": process.env.REACT_APP_TRAVEL_ADVISORAPI,
+          "X-RapidAPI-Key":
+            "8d6efa5f97mshcc1d444e24f8e6ap1b3862jsn7f82f6b9468d",
           "X-RapidAPI-Host": "travel-advisor.p.rapidapi.com",
         },
       };
@@ -185,6 +149,7 @@ function Carbon() {
           console.error(error);
         })
     );
+
     // const getImageUrls = () => {
     //   let imgUrlArr = [];
 
@@ -242,6 +207,8 @@ function Carbon() {
   if (!isLoaded) {
     return <div>Loading..</div>;
   }
+
+  console.log(steps);
 
   // ----- Render JSX ---- //
   return (
@@ -310,7 +277,38 @@ function Carbon() {
         </div>
 
         <div className="flex justify-center">
-          <ul className=" flex list-none">{steps}</ul>
+          <ul className=" flex list-none">
+            {steps?.map((item, index) => {
+              return (
+                <>
+                  <Card className="pb-4" sx={{ minWidth: 275 }} key={index}>
+                    <CardContent>
+                      <Typography
+                        sx={{ fontSize: 14 }}
+                        color="text.secondary"
+                        gutterBottom
+                        id="step_list"
+                      >
+                        {index + 1} - {item}
+                      </Typography>
+                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                        <img alt="" src={imgs} />
+                      </Typography>
+                      <CardMedia component="img" height="194" image="" alt="" />
+                      <Typography variant="body2">
+                        Desription/URL/TripAdvisorLink
+                        <br />
+                        {'"Review quote"'}
+                      </Typography>
+                    </CardContent>
+                    <CardActions>
+                      <Button size="small"></Button>
+                    </CardActions>
+                  </Card>
+                </>
+              );
+            })}
+          </ul>
         </div>
       </div>
     </>
