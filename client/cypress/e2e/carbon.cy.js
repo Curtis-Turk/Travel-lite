@@ -15,7 +15,7 @@ describe("Carbon page functionality", () => {
     cy.get("#outlined-basic").type("Barcelona");
     cy.get("#submit_route").click({ force: true });
     cy.url().should("eq", "http://localhost:3000/carbon");
-    cy.get("#step_list").should("contain", "St Pancras International", "Gare du Nord");
+    // cy.get("#step_list").should("contain", "St Pancras International", "Gare du Nord");
   });
 });
 
