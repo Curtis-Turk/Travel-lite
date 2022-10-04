@@ -25,13 +25,16 @@ function Home() {
     if (origin.current.value === "" || destination.current.value === "") {
       return;
     }
+    
+    sessionStorage.setItem('origin', origin.current.value);
+    sessionStorage.setItem('destination',  destination.current.value);
 
-    navigate("/carbon", {
-      state: {
-        origin: origin.current.value,
-        destination: destination.current.value,
-      },
-    });
+    // window.sessionStorage.setItem('origin', origin.current.value);
+    // window.sessionStorage.setItem('destination', destination.current.value);
+    // window.origin = origin.current.value;
+    // window.destination = destination.current.value;
+
+    navigate("/carbon");
   };
 
   return (
