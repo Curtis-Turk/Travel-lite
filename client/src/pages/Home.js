@@ -38,14 +38,16 @@ function Home() {
   };
 
   return (
-    <div className="font-mono mt-36">
-      <h1 className="flex justify-center font-bold pb-4 text-2xl">Where would you like to go?</h1>
+    <div className="font-mono pt-12">
+      <h1 className="flex justify-center font-bold pb-4 text-2xl">
+        Where would you like to go?
+      </h1>
       <div className="flex justify-center ">
         <div className="pr-3">
           <Autocomplete>
             <input
               type="text"
-              id="outlined-basic"
+              id="outlined-basic1"
               label="From"
               variant="outlined"
               size="small"
@@ -68,11 +70,20 @@ function Home() {
           />
         </Autocomplete>
         <div className="pl-2 pt-2">
-          <SearchIcon className="hover:text-gray-400 cursor-pointer" type="submit" onClick={setRoute} />
-          </div>
+          <SearchIcon
+            className="hover:text-gray-400 cursor-pointer"
+            type="submit"
+            id="submit_route"
+            onClick={setRoute}
+          />
+        </div>
       </div>
       <div className="flex justify-center">
-        <img src={world} alt="World" className="object-contain w-1/3 h-1/3"></img>
+        <img
+          src={world}
+          alt="World"
+          className="object-contain w-1/3 h-1/3"
+        ></img>
       </div>
       <div className="flex justify-center text-xl">
         <p>Plan your adventure, see more of the world, save the planet...</p>

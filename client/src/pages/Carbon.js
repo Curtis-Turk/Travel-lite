@@ -14,9 +14,33 @@ import "../index.css";
 // import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { trainCalculator, planeCalculator } from "../components/CarbonCalc";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import CardMedia from "@mui/material/CardMedia";
 
 function Carbon() {
-  // const location = useLocation(); //get parameters from input homepage
+
+  const [libraries] = useState(["places"]);
+  const location = useLocation(); //get parameters from input homepage
+
+  useEffect(() => {
+    if (location.state != null) {
+      updateMap(location.state.origin, location.state.destination);
+    }
+  }, [location.state]);
+
+  // --------- Load API ---------//
+
+  const center = { lat: 51.597656, lng: -0.172282 };
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    libraries,
+  });
+
+
   // --------- Hooks --------- //
   const [directionRes, setDirectionRes] = useState(null);
   const [trainDistance, setTrainDistance] = useState("");
@@ -26,6 +50,7 @@ function Carbon() {
   const [locationA, setLocationA] = useState("");
   const [locationB, setLocationB] = useState("");
   const [steps, setSteps] = useState("");
+
   const [imgs, setImgs] = useState();
   const [runUpdateMap, setRunUpdateMap] = useState(false);
 
@@ -36,6 +61,7 @@ function Carbon() {
       updateMap(origin, destination);
     }
   });
+
 
   useEffect(() => {
     setPlaneEmissions(planeCalculator(planeDistance));
@@ -72,30 +98,47 @@ function Carbon() {
 
     // --------- Get navigation steps --------- //
     const currentRoute = navigation.routes[0].legs[0];
-
     let stepArr = [];
+
     currentRoute.steps.forEach((step) => {
-      const string = step.instructions
-        .replaceAll("Train towards", "")
-        .replaceAll("Walk to", "");
-      stepArr.push(string);
+      if (step.travel_mode === "TRANSIT") {
+        stepArr.push(step.transit.arrival_stop.name);
+      }
     });
 
     const stepList = stepArr.map((item, index) => {
       return (
-        <li className="flex list-none pt-2 pr-4" key={index}>
-          <img
-            alt=""
-            className="w-8 h-8 "
-            src={require("../../src/pin.png")}
-          ></img>
-          {item}
-        </li>
+        <>
+          <Card className="pb-4" sx={{ minWidth: 275 }} key={index}>
+            <CardContent>
+              <Typography
+                sx={{ fontSize: 14 }}
+                color="text.secondary"
+                gutterBottom
+                id="step_list"
+              >
+                {index + 1} - {item}
+              </Typography>
+              <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                Image here
+              </Typography>
+              <CardMedia component="img" height="194" image="" alt="" />
+              <Typography variant="body2">
+                Desription/URL/TripAdvisorLink
+                <br />
+                {'"Review quote"'}
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="small"></Button>
+            </CardActions>
+          </Card>
+        </>
       );
     });
     setSteps(stepList);
 
-    // --------- Get information about places  --------- //
+    // --------- GeoCoder  --------- //
     const geocoder = new google.maps.Geocoder();
 
     const geocodeLocation = async (location) => {
@@ -113,6 +156,7 @@ function Carbon() {
       return latlngObj;
     };
 
+    // --------- Get information about places  --------- //
     const locationOptions = (locationLatLong) => {
       return {
         method: "GET",
@@ -125,25 +169,54 @@ function Carbon() {
           lang: "en_US",
         },
         headers: {
+
           'X-RapidAPI-Key': process.env.REACT_APP_TRAVEL_ADVISORAPI,
           'X-RapidAPI-Host': 'travel-advisor.p.rapidapi.com'
+
         },
       };
+    };
+
+    const getRandomInt = (min, max) => {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min) + min);
     };
 
     geocodeLocation("paris").then((data) =>
       axios
         .request(locationOptions(data))
         .then((response) => {
-          response.data.data.forEach((place) =>
-            setImgs(place.photo.images.small.url)
-          );
+          let rdmIndex = getRandomInt(0, response.data.data.length);
+          setImgs(response.data.data[rdmIndex].photo.images.small.url);
         })
         .catch((error) => {
           console.error(error);
         })
     );
+    // const getImageUrls = () => {
+    //   let imgUrlArr = [];
 
+    //   stepArr.forEach((step) => {
+    //     geocodeLocation(step).then((data) =>
+    //       axios
+    //         .request(locationOptions(data))
+    //         .then((response) => {
+    //           let rdmIndex = getRandomInt(0, response.data.data.length);
+    //           imgUrlArr.push(
+    //             response.data.data[rdmIndex].photo.images.small.url
+    //           );
+    //           console.log(imgUrlArr, "Image Arr");
+    //         })
+    //         .catch((error) => {
+    //           console.log(error, "Test");
+    //         })
+    //     );
+    //   });
+    // console.log(imgUrlArr);
+    // };
+
+    // getImageUrls();
     // --------- Work out plane distance + emissions --------- //
     const planeDistanceCalc = async () => {
       return [
@@ -179,7 +252,16 @@ function Carbon() {
   // ----- Render JSX ---- //
   return (
     <>
-      <div className="font-mono">
+      <div className="font-mono pt-4">
+        <div className="flex justify-center pb-2">
+          <h1 id="location">
+            <span className="p-6 text-xl">{locationA}</span>
+            <span>
+              <ArrowRightAltIcon />
+            </span>
+            <span className="p-6 text-xl">{locationB}</span>
+          </h1>
+        </div>
         <div className="flex justify-center pt-10">
           <table className="">
             <thead>
@@ -214,6 +296,7 @@ function Carbon() {
             </tbody>
           </table>
         </div>
+
         <div className="w-full">
           <div className="flex justify-center pt-6">
             <GoogleMap
@@ -227,23 +310,23 @@ function Carbon() {
           </div>
         </div>
 
+
+        <div className="flex justify-center pt-6">
+          <GoogleMap
+            center={center}
+            zoom={12}
+            mapContainerClassName="w-10/12 h-96 rounded-lg"
+          >
+            <Marker position={center} />
+            {directionRes && <DirectionsRenderer directions={directionRes} />}
+          </GoogleMap>
+        </div>
         <div className="pt-6 flex justify-center">
-          <h3 className="text-green-600 underline pb-4 font-bold ">
+          <h3 className="text-black-400 underline pb-4 font-mono ">
             Your Trip Details
           </h3>
         </div>
-        <div className="flex justify-center pb-2">
-          <p>
-            {locationA}
-            <span>
-              <ArrowRightAltIcon />
-              <ArrowRightAltIcon />
-              <ArrowRightAltIcon />
-              <ArrowRightAltIcon />
-            </span>
-            {locationB}
-          </p>
-        </div>
+
         <div className="flex justify-center">
           <ul className=" flex list-none">{steps}</ul>
         </div>
