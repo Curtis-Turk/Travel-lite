@@ -17,20 +17,6 @@ import { trainCalculator, planeCalculator } from "../components/CarbonCalc";
 
 function Carbon() {
   // const location = useLocation(); //get parameters from input homepage
-
-  useEffect(() => {
-    if ((window.origin !== '' && window.destination !== '')) {
-      updateMap(window.origin, window.destination);
-    };
-  }, []);
-
-  // --------- Load API ---------//
-  const center = { lat: 51.597656, lng: -0.172282 };
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-    libraries: ["places"],
-  });
-
   // --------- Hooks --------- //
   const [directionRes, setDirectionRes] = useState(null);
   const [trainDistance, setTrainDistance] = useState("");
@@ -41,14 +27,32 @@ function Carbon() {
   const [locationB, setLocationB] = useState("");
   const [steps, setSteps] = useState("");
   const [imgs, setImgs] = useState();
+  const [runUpdateMap, setRunUpdateMap] = useState(false);
+
+  useEffect(() => {
+    const destination = sessionStorage.getItem("destination");
+    const origin = sessionStorage.getItem("origin");
+    if(origin !== undefined && destination !== undefined && window.google !== undefined && !runUpdateMap) {
+      updateMap(origin, destination);
+    }
+  });
 
   useEffect(() => {
     setPlaneEmissions(planeCalculator(planeDistance));
   }, [planeDistance]);
 
+  // --------- Load API ---------//
+  const center = { lat: 51.597656, lng: -0.172282 };
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    libraries: ["places"],
+  });
+
   // -------- Update Map and Calculate Route ---------- //
   const updateMap = async (origin, destination) => {
+    setRunUpdateMap(true);
     const google = window.google;
+    
 
     // Navigation
     const directionsService = new google.maps.DirectionsService();
@@ -64,6 +68,7 @@ function Carbon() {
     setDirectionRes(navigation);
     setLocationA(navigation.request.origin.query);
     setLocationB(navigation.request.destination.query);
+  
 
     // --------- Get navigation steps --------- //
     const currentRoute = navigation.routes[0].legs[0];
@@ -161,8 +166,9 @@ function Carbon() {
     // --------- Work out train distance + emissions --------- //
     setTrainDistance(currentRoute.distance.text);
     let trainDistanceKM = navigation.routes[0].legs[0].distance.value / 1000;
-
+    sessionStorage.setItem('trainEmissions', Math.round(trainCalculator(trainDistanceKM)));
     setTrainEmissions(Math.round(trainCalculator(trainDistanceKM)));
+    sessionStorage.setItem('planeEmissions', (planeCalculator(planeDistance)));
   };
 
   // ----- Check if API is loading ----- //
@@ -211,7 +217,7 @@ function Carbon() {
         <div className="w-full">
           <div className="flex justify-center pt-6">
             <GoogleMap
-              center={center}
+              // center={center}
               zoom={12}
               mapContainerClassName="w-8/12 h-96 rounded-lg"
             >
