@@ -19,6 +19,7 @@ import Typography from "@mui/material/Typography";
 import CardMedia from "@mui/material/CardMedia";
 import axios from "axios";
 import { trainCalculator, planeCalculator } from "../components/CarbonCalc";
+import { callApi } from "../api/locationFetch";
 
 function Carbon() {
   const [libraries] = useState(["places"]);
@@ -40,6 +41,8 @@ function Carbon() {
   const [locationA, setLocationA] = useState("");
   const [locationB, setLocationB] = useState("");
   const [steps, setSteps] = useState([]);
+  const [google, setGoogle] = useState();
+  const [geocoder, setGeocoder] = useState();
 
   const [imgs, setImgs] = useState([]);
   const [runUpdateMap, setRunUpdateMap] = useState(false);
@@ -66,7 +69,11 @@ function Carbon() {
     setRunUpdateMap(true);
 
     const google = window.google;
+    setGoogle(google);
+    console.log(google);
     const geocoder = new google.maps.Geocoder();
+    setGeocoder(geocoder);
+
     const directionsService = new google.maps.DirectionsService();
     const navigation = await directionsService.route({
       origin: origin,
@@ -142,27 +149,15 @@ function Carbon() {
         const location = await geocodeLocation(stepArr[i]);
         const fetchOptions = locationOptions(location);
 
-        console.log(location, "location");
         axios
           .request(fetchOptions)
           .then((response) => {
-            // console.log(response, i, "testing response");
-            // let rdmIndex = getRandomInt(0, response.data.data.length);
-            console.log(response.data.data[0].photo.images.small.url);
             imgUrlArr.push(response.data.data[0].photo.images.small.url);
           })
           .catch((err) => {
             console.log(err, "failed fetch");
           });
       };
-
-      callApi(0)
-        .then(callApi(1))
-        .then(callApi(2))
-        .then(callApi(3))
-        // .then(callApi(4))
-        // .then(callApi(5))
-        .then(setImgs(imgUrlArr))
 
       console.log(imgUrlArr.length, "inside function");
 
@@ -171,7 +166,7 @@ function Carbon() {
 
     console.log(makeImageUrls(), "imgUrlArr");
 
-    // console.log(geocodeLocation("paris").then((data) =>
+    // geocodeLocation("paris").then((data) =>
     //   axios
     //     .request(locationOptions(data))
     //     .then((response) => {
@@ -181,7 +176,7 @@ function Carbon() {
     //     })
     //     .catch((error) => {
     //       console.error(error);
-    //     })
+    //     }
     // ))
 
     // --------- Set Route Comparison details --------- //
@@ -286,7 +281,7 @@ function Carbon() {
 
         <div className="flex justify-center">
           <ul className=" flex list-none">
-            {steps?.map((item, index) => {
+            {steps?.map((step, index) => {
               return (
                 <>
                   <Card className="pb-4" sx={{ minWidth: 275 }} key={index}>
@@ -297,10 +292,20 @@ function Carbon() {
                         gutterBottom
                         id="step_list"
                       >
-                        {index + 1} - {item}
+                        {index + 1} - {step}
                       </Typography>
                       <Typography sx={{ mb: 1.5 }} color="text.secondary">
                         <img alt="" src={imgs[index]} />
+                        <button
+                          onClick={() => {
+                            console.log(callApi(step, google, geocoder));
+                            // .then((response) =>
+                            //   console.log(response, "response")
+                            // );
+                          }}
+                        >
+                          Visit here
+                        </button>
                       </Typography>
                       <CardMedia component="img" height="194" image="" alt="" />
                       <Typography variant="body2">
