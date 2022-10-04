@@ -57,29 +57,29 @@ function AboutUs() {
             Meet the team
           </h2>
           <div className="flex justify-center">
-            <div class="w-3/5 grid grid-cols-3 gap-5">
+            <div className="w-3/5 grid grid-cols-3 gap-5">
               <img
-                class="scale-100 hover:scale-110 ease-in duration-400 rounded-lg"
+                className="scale-100 hover:scale-110 ease-in duration-400 rounded-lg"
                 src={eve}
                 alt="Evelina"
               />
               <img
-                class="scale-100 hover:scale-110 ease-in duration-400 rounded-lg"
+                className="scale-100 hover:scale-110 ease-in duration-400 rounded-lg"
                 src={alex}
                 alt="Alexandra"
               />
               <img
-                class="scale-100 hover:scale-110 ease-in duration-400 rounded-lg"
+                className="scale-100 hover:scale-110 ease-in duration-400 rounded-lg"
                 src={brij}
                 alt="Brijesh"
               />
               <img
-                class="ml-20 scale-100 hover:scale-110 ease-in duration-400 rounded-lg"
+                className="ml-20 scale-100 hover:scale-110 ease-in duration-400 rounded-lg"
                 src={curt}
                 alt="Curtis"
               />
               <img
-                class="ml-20 scale-100 hover:scale-110 ease-in duration-400 rounded-lg"
+                className="ml-20 scale-100 hover:scale-110 ease-in duration-400 rounded-lg"
                 src={syed}
                 alt="Syed"
               />
@@ -90,5 +90,8 @@ function AboutUs() {
     </div>
   );
 }
+
+// How we calculate your carbon impact
+//
 
 export default AboutUs;

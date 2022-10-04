@@ -2,8 +2,10 @@ import ecobulb from "../images/ecobulb.png";
 import cow from "../images/cow.png";
 import seedling from "../images/seedling.png";
 import faucet from "../images/faucet.png";
-import house from "../images/house.png";
+import coffee from "../images/coffee.png";
 import { useState, useEffect } from "react";
+import { savedEmissions, carbonComparisonCalc } from "../components/carbonComparison"
+import { Link } from "react-router-dom";
 
 function Facts() {
 
@@ -17,41 +19,55 @@ function Facts() {
     setDestination(sessionStorage.getItem("destination"));
     setTrainEmissions(sessionStorage.getItem("trainEmissions"));
     setPlaneEmissions(sessionStorage.getItem("planeEmissions"));
-    
-    console.log(planeEmissions)
-    console.log(trainEmissions)
-    // setPlaneEmissions(planeCalculator(planeDistance));
   }, []);
 
-  return (
+  // const savedEmissions = () => {
+  //   return (sessionStorage.getItem("planeEmissions") - sessionStorage.getItem("trainEmissions")).toLocaleString();
+  // };
+
+  // // const carbonComparisonCalc = () => {
+
+  // // }
+  // console.log(savedEmissions())
+
+  // bulbs avg year usage(8h) 79,400g CO2 source: Gridwatch.co.uk - https://savinglightbulb.wordpress.com/2018/10/11/how-much-co2-does-a-light-bulb-create/
+  // beef 50,000g per serving https://josephpoore.com/Science%20360%206392%20987%20-%20Accepted%20Manuscript.pdf
+  // planting one tree = 160,000g CO2 saved (source: treesforlife)
+  // one shower = 3066 g (per 15 min shower - the eco guide)
+  // cup of coffee - 280g (UCL)
+
+
+return (
     <div className="flex justify-center mt-24">
       <div className="bg-zinc-100 border rounded-3xl flex justify-center box-border h-2/3 w-2/3 p-4 mb-40">
         <div className="font-mono">
           <div className="flex justify-center"></div>
           <div className="ml-24 mr-24">
-            <h1 className="text-center flex justify-center font-bold pb-4 text-3xl mt-10">
-              Your trip from {origin} to {destination} will save you {planeEmissions - trainEmissions} g carbon
-              emissions! <br></br>
-              <br></br>That's the equivalent of:
-            </h1>
+            <h1 className="inline text-center font-bold pb-4 text-3xl mt-10">
+              Your trip from <span className="text-lime-600">{origin}</span> to <span className="text-lime-600">{destination}</span> will save you <span className="text-lime-600">{savedEmissions().toLocaleString()}</span>g carbon
+              emissions! </h1><br></br>
+              <br></br><h2 className="flex justify-center pb-4 text-3xl mt-10"> That's the equivalent of:
+            </h2>
             <p className="text-2xl mb-10 mt-20">
-              <img className="inline w-24" src={ecobulb} alt="Eco Bulb" /> Using
-              __ lightbulbs
+              <img className="inline w-24" src={ecobulb} alt="Eco Bulb" /> Using <span className="text-lime-600">{carbonComparisonCalc("bulb")}</span> lightbulbs for a year
             </p>
             <p className="text-right text-2xl mb-10 mt-20">
               <img className="inline w-24 mr-5" src={cow} alt="Cow" /> Not eating
-              beef for __ days
+              beef for <span className="text-lime-600">{carbonComparisonCalc("beef")}</span> days
             </p>
             <p className="text-2xl mb-10 mt-20">
-              <img className="inline w-24 mr-5" src={house} alt="House" /> Heating
-              your home for __ days
+              <img className="inline w-24 mr-5" src={coffee} alt="Coffee" /> <span className="text-lime-600">{carbonComparisonCalc("coffee")}</span> cups of coffee
             </p>
             <p className="text-right text-2xl mb-10 mt-20">
               <img className="inline w-24 mr-5" src={seedling} alt="Seedling" />{" "}
-              Planting __ trees
+              Planting <span className="text-lime-600">{carbonComparisonCalc("tree")}</span> trees
             </p>
             <p className="text-2xl mb-10 mt-20">
-              <img className="inline w-24 mr-5" src={faucet} alt="Faucet" /> __ showers
+              <img className="inline w-24 mr-5" src={faucet} alt="Faucet" />Taking <span className="text-lime-600">{carbonComparisonCalc("shower")}</span> showers
+            </p>
+            <br></br>
+            <p className="flex justify-center">View <span className="text-lime-600"> <Link to="/sources" className="hover:bg-gray-200">
+             sources</Link></span>
             </p>
           </div>
         </div>
@@ -61,3 +77,4 @@ function Facts() {
 }
 
 export default Facts;
+

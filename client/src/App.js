@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import Carbon from "./pages/Carbon";
 import AboutUs from "./pages/AboutUs";
 import Facts from "./pages/Facts";
+import Sources from "./pages/Sources";
 import Footer from "./components/Footer";
 import Navigation from "./components/Navigation";
 
@@ -24,6 +25,7 @@ function App() {
           <Route path="/carbon" element={<Carbon />} />
           <Route path="/aboutus" element={<AboutUs />} />
           <Route path="/facts" element={<Facts />} />
+          <Route path="/sources" element={<Sources />} />
         </Routes>
 
         {/* Footer */}

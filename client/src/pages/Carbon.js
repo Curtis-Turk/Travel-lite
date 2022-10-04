@@ -235,9 +235,9 @@ function Carbon() {
       Math.round(trainCalculator(trainDistanceKM))
     );
     setTrainEmissions(Math.round(trainCalculator(trainDistanceKM)));
-    sessionStorage.setItem("planeEmissions", planeCalculator(planeDistance));
   };
-
+  sessionStorage.setItem("planeEmissions", planeCalculator(planeDistance));
+  
   // ----- Check if API is loading ----- //
   if (!isLoaded) {
     return <div>Loading..</div>;
