@@ -138,27 +138,26 @@ function Carbon() {
       return Math.floor(Math.random() * (max - min) + min);
     };
 
-   
     let imgUrlArr = [];
     stepArr.map((step) => {
-    geocodeLocation(step).then((data) =>
-      axios
-        .request(locationOptions(data))
-        .then((response) => {
-          let rdmIndex = getRandomInt(0, response.data.data.length);
-          imgUrlArr.push(response.data.data[rdmIndex].photo.images.small.url);
-        })
-        .catch((error) => {
-          console.error(error);
-        })
-    );
+      geocodeLocation(step).then((data) =>
+        axios
+          .request(locationOptions(data))
+          .then((response) => {
+            let rdmIndex = getRandomInt(0, response.data.data.length);
+            imgUrlArr.push(response.data.data[rdmIndex].photo.images.small.url);
+          })
+          .catch((error) => {
+            console.error(error);
+          })
+      );
     });
 
     setTimeout(() => {
       console.log(imgUrlArr, "set timeout");
     }, 6000);
     setImgs(imgUrlArr);
-    
+
     console.log(stepArr);
 
     // const imgFunc = () => {
@@ -179,7 +178,6 @@ function Carbon() {
 
     // imgFunc();
 
-  
     // --------- Work out plane distance + emissions --------- //
     const planeDistanceCalc = async () => {
       return [
@@ -297,7 +295,9 @@ function Carbon() {
                         {index + 1} - {item}
                       </Typography>
                       <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        {/* img */}
+                        {imgs?.map((img, id) => {
+                          return <img src={img} alt="" key={id} />;
+                        })}
                       </Typography>
                       <CardMedia component="img" height="194" image="" alt="" />
                       <Typography variant="body2">
