@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import {
   useJsApiLoader,
   GoogleMap,
   Marker,
   DirectionsRenderer,
 } from "@react-google-maps/api";
+import "../index.css";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import TrainIcon from "@mui/icons-material/Train";
@@ -20,16 +21,10 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import CardMedia from "@mui/material/CardMedia";
+import { geocodeLocation, callApi } from "../api/locationFetch";
 
 function Carbon() {
   const [libraries] = useState(["places"]);
-  const location = useLocation(); //get parameters from input homepage
-
-  useEffect(() => {
-    if (location.state != null) {
-      updateMap(location.state.origin, location.state.destination);
-    }
-  }, [location.state]);
 
   // --------- Load API ---------//
 
@@ -47,9 +42,12 @@ function Carbon() {
   const [trainEmissions, setTrainEmissions] = useState("");
   const [locationA, setLocationA] = useState("");
   const [locationB, setLocationB] = useState("");
-  const [steps, setSteps] = useState("");
+  const [steps, setSteps] = useState([]);
+  const [google, setGoogle] = useState();
+  const [geocoder, setGeocoder] = useState();
 
-  const [imgs, setImgs] = useState();
+  const [imgs, setImgs] = useState("");
+  const [render, setRender] = useState("");
   const [runUpdateMap, setRunUpdateMap] = useState(false);
 
   useEffect(() => {
@@ -74,9 +72,12 @@ function Carbon() {
   // -------- Update Map and Calculate Route ---------- //
   const updateMap = async (origin, destination) => {
     setRunUpdateMap(true);
-    const google = window.google;
 
-    // Navigation
+    const google = window.google;
+    setGoogle(google);
+    const geocoder = new google.maps.Geocoder();
+    setGeocoder(geocoder);
+
     const directionsService = new google.maps.DirectionsService();
     let navigation = null;
     try {
@@ -107,120 +108,15 @@ function Carbon() {
       }
     });
 
-    const stepList = stepArr.map((item, index) => {
-      return (
-        <>
-          <Card className="pb-4" sx={{ minWidth: 275 }} key={index}>
-            <CardContent>
-              <Typography
-                sx={{ fontSize: 14 }}
-                color="text.secondary"
-                gutterBottom
-                id="step_list"
-              >
-                {index + 1} - {item}
-              </Typography>
-              <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                Image here
-              </Typography>
-              <CardMedia component="img" height="194" image="" alt="" />
-              <Typography variant="body2">
-                Desription/URL/TripAdvisorLink
-                <br />
-                {'"Review quote"'}
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button size="small"></Button>
-            </CardActions>
-          </Card>
-        </>
-      );
-    });
-    setSteps(stepList);
+    setSteps(stepArr);
+    const emptyArr = stepArr.map((step) => (step = ""));
+    setImgs(emptyArr);
 
-    // --------- GeoCoder  --------- //
-    const geocoder = new google.maps.Geocoder();
-
-    const geocodeLocation = async (location) => {
-      let latlngObj = {};
-      await geocoder.geocode({ address: location }, (results, status) => {
-        if (status === google.maps.GeocoderStatus.OK) {
-          latlngObj = {
-            lat: results[0].geometry.location.lat(),
-            lng: results[0].geometry.location.lng(),
-          };
-        } else {
-          return "Could not retrieve coordinates for: location";
-        }
-      });
-      return latlngObj;
-    };
-
-    // --------- Get information about places  --------- //
-    const locationOptions = (locationLatLong) => {
-      return {
-        method: "GET",
-        url: "https://travel-advisor.p.rapidapi.com/attractions/list-by-latlng",
-        params: {
-          longitude: locationLatLong.lng,
-          latitude: locationLatLong.lat,
-          lunit: "km",
-          currency: "USD",
-          lang: "en_US",
-        },
-        headers: {
-          "X-RapidAPI-Key": process.env.REACT_APP_TRAVEL_ADVISORAPI,
-          "X-RapidAPI-Host": "travel-advisor.p.rapidapi.com",
-        },
-      };
-    };
-
-    const getRandomInt = (min, max) => {
-      min = Math.ceil(min);
-      max = Math.floor(max);
-      return Math.floor(Math.random() * (max - min) + min);
-    };
-
-    geocodeLocation("paris").then((data) =>
-      axios
-        .request(locationOptions(data))
-        .then((response) => {
-          let rdmIndex = getRandomInt(0, response.data.data.length);
-          setImgs(response.data.data[rdmIndex].photo.images.small.url);
-        })
-        .catch((error) => {
-          console.error(error);
-        })
-    );
-    // const getImageUrls = () => {
-    //   let imgUrlArr = [];
-
-    //   stepArr.forEach((step) => {
-    //     geocodeLocation(step).then((data) =>
-    //       axios
-    //         .request(locationOptions(data))
-    //         .then((response) => {
-    //           let rdmIndex = getRandomInt(0, response.data.data.length);
-    //           imgUrlArr.push(
-    //             response.data.data[rdmIndex].photo.images.small.url
-    //           );
-    //           console.log(imgUrlArr, "Image Arr");
-    //         })
-    //         .catch((error) => {
-    //           console.log(error, "Test");
-    //         })
-    //     );
-    //   });
-    // console.log(imgUrlArr);
-    // };
-
-    // getImageUrls();
-    // --------- Work out plane distance + emissions --------- //
+    // --------- Set Route Comparison details --------- //
     const planeDistanceCalc = async () => {
       return [
-        await geocodeLocation(origin),
-        await geocodeLocation(destination),
+        await geocodeLocation(origin, google, geocoder),
+        await geocodeLocation(destination, google, geocoder),
       ];
     };
 
@@ -235,7 +131,6 @@ function Carbon() {
       )
     );
 
-    // --------- Work out train distance + emissions --------- //
     setTrainDistance(currentRoute.distance.text);
     let trainDistanceKM = navigation.routes[0].legs[0].distance.value / 1000;
     sessionStorage.setItem(
@@ -250,6 +145,28 @@ function Carbon() {
   if (!isLoaded) {
     return <div>Loading..</div>;
   }
+
+  const fetchStepInfo = (step, index) => {
+    let imgArray = [...imgs];
+    imgArray[index] = {
+      img: " https://media2.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif?cid=790b7611c5ecd6019dbf660f422e47974be9b67adc5fca1a&rid=giphy.gif&ct=g",
+    };
+    setImgs(imgArray);
+    callApi(step, google, geocoder)
+      .then(
+        (response) =>
+          // console.log(response),
+          (imgArray[index] = {
+            img: response.photo.images.medium.url,
+            name: response.name,
+            url: response.web_url,
+            rating: response.rating,
+            caption: response.photo.caption,
+          }),
+        setImgs(imgArray)
+      )
+      .then((img) => setRender(img));
+  };
 
   // ----- Render JSX ---- //
   return (
@@ -301,11 +218,7 @@ function Carbon() {
 
         <div className="w-full">
           <div className="flex justify-center pt-6">
-            <GoogleMap
-              // center={center}
-              zoom={12}
-              mapContainerClassName="w-8/12 h-96 rounded-lg"
-            >
+            <GoogleMap zoom={12} mapContainerClassName="w-8/12 h-96 rounded-lg">
               <Marker position={center} />
               {directionRes && <DirectionsRenderer directions={directionRes} />}
             </GoogleMap>
@@ -318,7 +231,57 @@ function Carbon() {
         </div>
 
         <div className="flex justify-center">
-          <ul className=" flex list-none">{steps}</ul>
+          <ul className=" flex list-none">
+            {steps?.map((step, index) => {
+              return (
+                <>
+                  <Card className="pb-4" sx={{ minWidth: 275 }} key={index}>
+                    <CardContent>
+                      <Typography
+                        sx={{ fontSize: 14 }}
+                        color="text.secondary"
+                        gutterBottom
+                        id="step_list"
+                      >
+                        {index + 1} - {step}
+                      </Typography>
+                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                        <CardMedia
+                          component="img"
+                          height="194"
+                          image=""
+                          alt=""
+                        />
+                        <img
+                          className="object-contain"
+                          alt=""
+                          src={imgs[index].img}
+                        />
+                        <button
+                          onClick={() => {
+                            fetchStepInfo(step, index);
+                          }}
+                        >
+                          Click here for a trip idea
+                        </button>
+                      </Typography>
+                      <Typography variant="body2">
+                        <br />
+                        {/* {imgs[index].caption} */}
+                        {imgs[index].name}
+                        <br />
+                        <br />
+                        <a href={imgs[index].url}>Find out more</a>
+                      </Typography>
+                    </CardContent>
+                    <CardActions>
+                      <Button size="small"></Button>
+                    </CardActions>
+                  </Card>
+                </>
+              );
+            })}
+          </ul>
         </div>
       </div>
     </>
