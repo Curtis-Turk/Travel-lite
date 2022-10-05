@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 function Navigation() {
   return (
     <>
-      <footer className="top-0 left-0 z-20 p-4 w-full bg-white border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
+      <footer className="fixed-top-0 font-mono left-0 z-20 p-4 w-full bg-white border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
         <span className="text-md text-gray-500 sm:text-center dark:text-gray-400">
           <Link to="/" className=" hover:bg-gray-200">
             Travel-Lite
