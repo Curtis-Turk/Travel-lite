@@ -1,7 +1,6 @@
 import axios from "axios";
 
 export const geocodeLocation = async (location, google, geocoder) => {
-  console.log("making a geocode request");
   let latlngObj = {};
   await geocoder.geocode({ address: location }, (results, status) => {
     if (status === google.maps.GeocoderStatus.OK) {
@@ -28,23 +27,25 @@ export const locationOptions = (locationLatLong) => {
       lang: "en_US",
     },
     headers: {
-      "X-RapidAPI-Key": "d48d3fc86dmsh420321da7e82d86p1682cbjsn42c7e0df5c9e",
+      "X-RapidAPI-Key": "b9a2e608eamsh6da9fcbe7b3f84ep1e3c40jsn2484d22a233f",
       "X-RapidAPI-Host": "travel-advisor.p.rapidapi.com",
     },
   };
 };
 
+const getRandomInt = (min, max) => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min);
+};
+
 export const callApi = async (step, google, geocoder) => {
   const location = await geocodeLocation(step, google, geocoder);
   const fetchOptions = locationOptions(location);
-  axios
-    .request(fetchOptions)
-    .then((response) => {
-      console.log(response.data.data[0]);
-      return new Promise(response.data.data[0]);
-      // .photo.images.small.url;
-    })
-    .catch((err) => {
-      console.log(err, "failed fetch");
-    });
+  try {
+    const { data: response } = await axios.request(fetchOptions); //use data destructuring to get data from the promise object
+    return await response.data[getRandomInt(0, 20)];
+  } catch (error) {
+    console.log(error);
+  }
 };

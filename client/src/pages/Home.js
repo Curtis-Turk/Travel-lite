@@ -25,9 +25,9 @@ function Home() {
     if (origin.current.value === "" || destination.current.value === "") {
       return;
     }
-    
-    sessionStorage.setItem('origin', origin.current.value);
-    sessionStorage.setItem('destination',  destination.current.value);
+
+    sessionStorage.setItem("origin", origin.current.value);
+    sessionStorage.setItem("destination", destination.current.value);
 
     // window.sessionStorage.setItem('origin', origin.current.value);
     // window.sessionStorage.setItem('destination', destination.current.value);

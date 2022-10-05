@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import {
   useJsApiLoader,
   GoogleMap,
@@ -17,9 +17,8 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import CardMedia from "@mui/material/CardMedia";
-import axios from "axios";
 import { trainCalculator, planeCalculator } from "../components/CarbonCalc";
-import { callApi } from "../api/locationFetch";
+import { geocodeLocation, callApi } from "../api/locationFetch";
 
 function Carbon() {
   const [libraries] = useState(["places"]);
@@ -44,7 +43,8 @@ function Carbon() {
   const [google, setGoogle] = useState();
   const [geocoder, setGeocoder] = useState();
 
-  const [imgs, setImgs] = useState([]);
+  const [imgs, setImgs] = useState("");
+  const [render, setRender] = useState("");
   const [runUpdateMap, setRunUpdateMap] = useState(false);
 
   useEffect(() => {
@@ -61,6 +61,14 @@ function Carbon() {
   });
 
   useEffect(() => {
+    console.log("is rendering");
+  });
+
+  useEffect(() => {
+    console.log(imgs);
+  }, [imgs]);
+
+  useEffect(() => {
     setPlaneEmissions(planeCalculator(planeDistance));
   }, [planeDistance]);
 
@@ -70,7 +78,6 @@ function Carbon() {
 
     const google = window.google;
     setGoogle(google);
-    console.log(google);
     const geocoder = new google.maps.Geocoder();
     setGeocoder(geocoder);
 
@@ -97,93 +104,16 @@ function Carbon() {
         stepArr.push(step.transit.arrival_stop.name);
       }
     });
+
     setSteps(stepArr);
-
-    // ------- Geocoder -------- //
-    const locationOptions = (locationLatLong) => {
-      return {
-        method: "GET",
-        url: "https://travel-advisor.p.rapidapi.com/attractions/list-by-latlng",
-        params: {
-          longitude: locationLatLong.lng,
-          latitude: locationLatLong.lat,
-          lunit: "km",
-          currency: "USD",
-          lang: "en_US",
-        },
-        headers: {
-          "X-RapidAPI-Key":
-            "d48d3fc86dmsh420321da7e82d86p1682cbjsn42c7e0df5c9e",
-          "X-RapidAPI-Host": "travel-advisor.p.rapidapi.com",
-        },
-      };
-    };
-
-    const geocodeLocation = async (location) => {
-      console.log("making a geocode request");
-      let latlngObj = {};
-      await geocoder.geocode({ address: location }, (results, status) => {
-        // console.log(results[0]);
-        if (status === google.maps.GeocoderStatus.OK) {
-          latlngObj = {
-            lat: results[0].geometry.location.lat(),
-            lng: results[0].geometry.location.lng(),
-          };
-        } else {
-          return "Could not retrieve coordinates for: location";
-        }
-      });
-      return latlngObj;
-    };
-
-    const getRandomInt = (min, max) => {
-      min = Math.ceil(min);
-      max = Math.floor(max);
-      return Math.floor(Math.random() * (max - min) + min);
-    };
-
-    const makeImageUrls = () => {
-      let imgUrlArr = [];
-
-      const callApi = async (i) => {
-        const location = await geocodeLocation(stepArr[i]);
-        const fetchOptions = locationOptions(location);
-
-        axios
-          .request(fetchOptions)
-          .then((response) => {
-            imgUrlArr.push(response.data.data[0].photo.images.small.url);
-          })
-          .catch((err) => {
-            console.log(err, "failed fetch");
-          });
-      };
-
-      console.log(imgUrlArr.length, "inside function");
-
-      return imgUrlArr;
-    };
-
-    console.log(makeImageUrls(), "imgUrlArr");
-
-    // geocodeLocation("paris").then((data) =>
-    //   axios
-    //     .request(locationOptions(data))
-    //     .then((response) => {
-    //       console.log(response);
-    //       // let rdmIndex = getRandomInt(0, response.data.data.length);
-    //       // setImgs(response.data.data[rdmIndex].photo.images.small.url);
-    //     })
-    //     .catch((error) => {
-    //       console.error(error);
-    //     }
-    // ))
+    const emptyArr = stepArr.map((step) => (step = ""));
+    setImgs(emptyArr);
 
     // --------- Set Route Comparison details --------- //
     const planeDistanceCalc = async () => {
       return [
-        await geocodeLocation(origin),
-        await geocodeLocation(destination),
+        await geocodeLocation(origin, google, geocoder),
+        await geocodeLocation(destination, google, geocoder),
       ];
     };
 
@@ -212,6 +142,30 @@ function Carbon() {
   if (!isLoaded) {
     return <div>Loading..</div>;
   }
+
+  const fetchStepInfo = (step, index) => {
+    let imgArray = [...imgs];
+    imgArray[index] = {
+      img: " https://media2.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif?cid=790b7611c5ecd6019dbf660f422e47974be9b67adc5fca1a&rid=giphy.gif&ct=g",
+    };
+    setImgs(imgArray);
+    callApi(step, google, geocoder)
+      .then(
+        (response) =>
+          (imgArray[index] = {
+            img: response.photo.images.small.url,
+            url: response.web_url,
+            rating: response.rating,
+            caption: response.photo.caption,
+          }),
+        setImgs(imgArray)
+      )
+      .then((img) => setRender(img));
+  };
+
+  // response.rating
+  // response.web_url
+  // response.photo.caption
 
   // ----- Render JSX ---- //
   return (
@@ -263,11 +217,7 @@ function Carbon() {
 
         <div className="w-full">
           <div className="flex justify-center pt-6">
-            <GoogleMap
-              // center={center}
-              zoom={12}
-              mapContainerClassName="w-4/12 h-96 rounded-lg"
-            >
+            <GoogleMap zoom={12} mapContainerClassName="w-4/12 h-96 rounded-lg">
               <Marker position={center} />
               {directionRes && <DirectionsRenderer directions={directionRes} />}
             </GoogleMap>
@@ -295,23 +245,26 @@ function Carbon() {
                         {index + 1} - {step}
                       </Typography>
                       <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        <img alt="" src={imgs[index]} />
+                        <img
+                          className="flex justify-center rounded "
+                          alt=""
+                          src={imgs[index].img}
+                        />
                         <button
                           onClick={() => {
-                            console.log(callApi(step, google, geocoder));
-                            // .then((response) =>
-                            //   console.log(response, "response")
-                            // );
+                            fetchStepInfo(step, index);
                           }}
                         >
-                          Visit here
+                          Click here for a trip idea
                         </button>
                       </Typography>
                       <CardMedia component="img" height="194" image="" alt="" />
                       <Typography variant="body2">
-                        Desription/URL/TripAdvisorLink
                         <br />
-                        {'"Review quote"'}
+                        {imgs[index].caption}
+                        <br />
+                        <br />
+                        <a href={imgs[index].url}>Find out more</a>
                       </Typography>
                     </CardContent>
                     <CardActions>
