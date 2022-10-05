@@ -29,17 +29,12 @@ function Home() {
     sessionStorage.setItem('origin', origin.current.value);
     sessionStorage.setItem('destination',  destination.current.value);
 
-    // window.sessionStorage.setItem('origin', origin.current.value);
-    // window.sessionStorage.setItem('destination', destination.current.value);
-    // window.origin = origin.current.value;
-    // window.destination = destination.current.value;
-
     navigate("/carbon");
   };
 
   return (
     <div className="font-mono pt-12">
-      <h1 className="flex justify-center font-bold pb-4 text-2xl">
+      <h1 className="mt-20 flex justify-center font-bold pb-4 text-2xl">
         Where would you like to go?
       </h1>
       <div className="flex justify-center ">
@@ -85,7 +80,7 @@ function Home() {
           className="object-contain w-1/3 h-1/3"
         ></img>
       </div>
-      <div className="flex justify-center text-xl">
+      <div className="flex justify-center text-xl mb-20">
         <p>Plan your adventure, see more of the world, save the planet...</p>
       </div>
     </div>
