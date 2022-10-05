@@ -11,7 +11,7 @@ import TrainIcon from "@mui/icons-material/Train";
 import PublicIcon from "@mui/icons-material/Public";
 import RouteIcon from "@mui/icons-material/Route";
 import "../index.css";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { trainCalculator, planeCalculator } from "../components/CarbonCalc";
 import Card from "@mui/material/Card";
@@ -69,6 +69,8 @@ function Carbon() {
     setPlaneEmissions(planeCalculator(planeDistance));
   }, [planeDistance]);
 
+  const navigate = useNavigate();
+
   // -------- Update Map and Calculate Route ---------- //
   const updateMap = async (origin, destination) => {
     setRunUpdateMap(true);
@@ -76,15 +78,21 @@ function Carbon() {
 
     // Navigation
     const directionsService = new google.maps.DirectionsService();
-    const navigation = await directionsService.route({
-      origin: origin,
-      destination: destination,
-      travelMode: google.maps.TravelMode.TRANSIT,
-      transitOptions: {
-        modes: [google.maps.TransitMode.TRAIN],
-      },
-    });
+    let navigation = null;
+    try {
+        navigation = await directionsService.route({
+        origin: origin,
+        destination: destination,
+        travelMode: google.maps.TravelMode.TRANSIT,
+        transitOptions: {
+          modes: [google.maps.TransitMode.TRAIN],
+        },
+      });
+     } catch (error) {
+        navigate("/error")
+    }
 
+    if (navigation != null) {
     setDirectionRes(navigation);
     setLocationA(navigation.request.origin.query);
     setLocationB(navigation.request.destination.query);
@@ -235,9 +243,9 @@ function Carbon() {
       Math.round(trainCalculator(trainDistanceKM))
     );
     setTrainEmissions(Math.round(trainCalculator(trainDistanceKM)));
-  };
+  }};
   sessionStorage.setItem("planeEmissions", planeCalculator(planeDistance));
-  
+
   // ----- Check if API is loading ----- //
   if (!isLoaded) {
     return <div>Loading..</div>;

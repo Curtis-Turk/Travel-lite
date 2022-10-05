@@ -39,8 +39,7 @@ function Facts() {
 
 return (
     <div className="flex justify-center mt-24">
-      <div className="bg-zinc-100 border rounded-3xl flex justify-center box-border h-2/3 w-2/3 p-4 mb-40">
-        <div className="font-mono">
+      <div className="font-mono bg-zinc-100 border rounded-3xl flex justify-center box-border h-2/3 w-2/3 p-4 mb-40">
           <div className="flex justify-center"></div>
           <div className="ml-24 mr-24">
             <h1 className="inline text-center font-bold pb-4 text-3xl mt-10">
@@ -71,8 +70,7 @@ return (
             </p>
           </div>
         </div>
-      </div>
-    </div>
+        </div>
   );
 }
 
