@@ -1,16 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import {
   useJsApiLoader,
   GoogleMap,
   Marker,
   DirectionsRenderer,
 } from "@react-google-maps/api";
+import "../index.css";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
 import TrainIcon from "@mui/icons-material/Train";
 import PublicIcon from "@mui/icons-material/Public";
 import RouteIcon from "@mui/icons-material/Route";
 import "../index.css";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { trainCalculator, planeCalculator } from "../components/CarbonCalc";
 import Card from "@mui/material/Card";
@@ -19,6 +21,7 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import CardMedia from "@mui/material/CardMedia";
+import { geocodeLocation, callApi } from "../api/locationFetch";
 
 function Carbon() {
   const [libraries] = useState(["places"]);
@@ -40,8 +43,11 @@ function Carbon() {
   const [locationA, setLocationA] = useState("");
   const [locationB, setLocationB] = useState("");
   const [steps, setSteps] = useState([]);
+  const [google, setGoogle] = useState();
+  const [geocoder, setGeocoder] = useState();
 
-  const [imgs, setImgs] = useState([]);
+  const [imgs, setImgs] = useState("");
+  const [render, setRender] = useState("");
   const [runUpdateMap, setRunUpdateMap] = useState(false);
 
   useEffect(() => {
@@ -61,22 +67,33 @@ function Carbon() {
     setPlaneEmissions(planeCalculator(planeDistance));
   }, [planeDistance]);
 
+  const navigate = useNavigate();
+
   // -------- Update Map and Calculate Route ---------- //
   const updateMap = async (origin, destination) => {
     setRunUpdateMap(true);
+
     const google = window.google;
+    setGoogle(google);
+    const geocoder = new google.maps.Geocoder();
+    setGeocoder(geocoder);
 
-    // Navigation
     const directionsService = new google.maps.DirectionsService();
-    const navigation = await directionsService.route({
-      origin: origin,
-      destination: destination,
-      travelMode: google.maps.TravelMode.TRANSIT,
-      transitOptions: {
-        modes: [google.maps.TransitMode.TRAIN],
-      },
-    });
+    let navigation = null;
+    try {
+        navigation = await directionsService.route({
+        origin: origin,
+        destination: destination,
+        travelMode: google.maps.TravelMode.TRANSIT,
+        transitOptions: {
+          modes: [google.maps.TransitMode.TRAIN],
+        },
+      });
+     } catch (error) {
+        navigate("/error")
+    }
 
+    if (navigation != null) {
     setDirectionRes(navigation);
     setLocationA(navigation.request.origin.query);
     setLocationB(navigation.request.destination.query);
@@ -92,97 +109,14 @@ function Carbon() {
     });
 
     setSteps(stepArr);
+    const emptyArr = stepArr.map((step) => (step = ""));
+    setImgs(emptyArr);
 
-    // --------- GeoCoder  --------- //
-    const geocoder = new google.maps.Geocoder();
-
-    const geocodeLocation = async (location) => {
-      let latlngObj = {};
-      await geocoder.geocode({ address: location }, (results, status) => {
-        if (status === google.maps.GeocoderStatus.OK) {
-          latlngObj = {
-            lat: results[0].geometry.location.lat(),
-            lng: results[0].geometry.location.lng(),
-          };
-        } else {
-          return "Could not retrieve coordinates for: location";
-        }
-      });
-
-      return latlngObj;
-    };
-
-    // --------- Get information about places  --------- //
-    const locationOptions = (locationLatLong) => {
-      return {
-        method: "GET",
-        url: "https://travel-advisor.p.rapidapi.com/attractions/list-by-latlng",
-        params: {
-          longitude: locationLatLong.lng,
-          latitude: locationLatLong.lat,
-          lunit: "km",
-          currency: "USD",
-          lang: "en_US",
-        },
-        headers: {
-          "X-RapidAPI-Key":
-            "b9a2e608eamsh6da9fcbe7b3f84ep1e3c40jsn2484d22a233f",
-          "X-RapidAPI-Host": "travel-advisor.p.rapidapi.com",
-        },
-      };
-    };
-
-    const getRandomInt = (min, max) => {
-      min = Math.ceil(min);
-      max = Math.floor(max);
-      return Math.floor(Math.random() * (max - min) + min);
-    };
-
-    let imgUrlArr = [];
-    stepArr.map((step) => {
-      geocodeLocation(step).then((data) =>
-        axios
-          .request(locationOptions(data))
-          .then((response) => {
-            let rdmIndex = getRandomInt(0, response.data.data.length);
-            imgUrlArr.push(response.data.data[rdmIndex].photo.images.small.url);
-          })
-          .catch((error) => {
-            console.error(error);
-          })
-      );
-    });
-
-    setTimeout(() => {
-      console.log(imgUrlArr, "set timeout");
-    }, 6000);
-    setImgs(imgUrlArr);
-
-    console.log(stepArr);
-
-    // const imgFunc = () => {
-    //   const imgStops = [];
-    //   stepArr.map((step, index) => {
-    //     imgUrlArr.map((img, imgIdx) => {
-    //       if (index === imgIdx) {
-    //         console.log(step);
-    //         imgStops.push({ stop: step, image: img });
-    //         console.log(imgStops);
-    //       } else {
-    //         console.log("This doesn't work");
-    //       }
-    //     });
-    //   });
-    //   console.log(imgStops);
-    // };
-
-    // imgFunc();
-
-    // --------- Work out plane distance + emissions --------- //
+    // --------- Set Route Comparison details --------- //
     const planeDistanceCalc = async () => {
       return [
-        await geocodeLocation(origin),
-        await geocodeLocation(destination),
+        await geocodeLocation(origin, google, geocoder),
+        await geocodeLocation(destination, google, geocoder),
       ];
     };
 
@@ -197,7 +131,6 @@ function Carbon() {
       )
     );
 
-    // --------- Work out train distance + emissions --------- //
     setTrainDistance(currentRoute.distance.text);
     let trainDistanceKM = navigation.routes[0].legs[0].distance.value / 1000;
     sessionStorage.setItem(
@@ -205,13 +138,35 @@ function Carbon() {
       Math.round(trainCalculator(trainDistanceKM))
     );
     setTrainEmissions(Math.round(trainCalculator(trainDistanceKM)));
-    sessionStorage.setItem("planeEmissions", planeCalculator(planeDistance));
-  };
+  }};
+  sessionStorage.setItem("planeEmissions", planeCalculator(planeDistance));
 
   // ----- Check if API is loading ----- //
   if (!isLoaded) {
     return <div>Loading..</div>;
   }
+
+  const fetchStepInfo = (step, index) => {
+    let imgArray = [...imgs];
+    imgArray[index] = {
+      img: " https://media2.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif?cid=790b7611c5ecd6019dbf660f422e47974be9b67adc5fca1a&rid=giphy.gif&ct=g",
+    };
+    setImgs(imgArray);
+    callApi(step, google, geocoder)
+      .then(
+        (response) =>
+          // console.log(response),
+          (imgArray[index] = {
+            img: response.photo.images.medium.url,
+            name: response.name,
+            url: response.web_url,
+            rating: response.rating,
+            caption: response.photo.caption,
+          }),
+        setImgs(imgArray)
+      )
+      .then((img) => setRender(img));
+  };
 
   // ----- Render JSX ---- //
   return (
@@ -263,11 +218,7 @@ function Carbon() {
 
         <div className="w-full">
           <div className="flex justify-center pt-6">
-            <GoogleMap
-              // center={center}
-              zoom={12}
-              mapContainerClassName="w-8/12 h-96 rounded-lg"
-            >
+            <GoogleMap zoom={12} mapContainerClassName="w-8/12 h-96 rounded-lg">
               <Marker position={center} />
               {directionRes && <DirectionsRenderer directions={directionRes} />}
             </GoogleMap>
@@ -281,7 +232,7 @@ function Carbon() {
 
         <div className="flex justify-center">
           <ul className=" flex list-none">
-            {steps?.map((item, index) => {
+            {steps?.map((step, index) => {
               return (
                 <>
                   <Card className="pb-4" sx={{ minWidth: 275 }} key={index}>
@@ -292,18 +243,35 @@ function Carbon() {
                         gutterBottom
                         id="step_list"
                       >
-                        {index + 1} - {item}
+                        {index + 1} - {step}
                       </Typography>
                       <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        {imgs?.map((img, id) => {
-                          return <img src={img} alt="" key={id} />;
-                        })}
+                        <CardMedia
+                          component="img"
+                          height="194"
+                          image=""
+                          alt=""
+                        />
+                        <img
+                          className="object-contain"
+                          alt=""
+                          src={imgs[index].img}
+                        />
+                        <button
+                          onClick={() => {
+                            fetchStepInfo(step, index);
+                          }}
+                        >
+                          Click here for a trip idea
+                        </button>
                       </Typography>
-                      <CardMedia component="img" height="194" image="" alt="" />
                       <Typography variant="body2">
-                        Desription/URL/TripAdvisorLink
                         <br />
-                        {'"Review quote"'}
+                        {/* {imgs[index].caption} */}
+                        {imgs[index].name}
+                        <br />
+                        <br />
+                        <a href={imgs[index].url}>Find out more</a>
                       </Typography>
                     </CardContent>
                     <CardActions>
