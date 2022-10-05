@@ -61,14 +61,6 @@ function Carbon() {
   });
 
   useEffect(() => {
-    console.log("is rendering");
-  });
-
-  useEffect(() => {
-    console.log(imgs);
-  }, [imgs]);
-
-  useEffect(() => {
     setPlaneEmissions(planeCalculator(planeDistance));
   }, [planeDistance]);
 
@@ -152,8 +144,10 @@ function Carbon() {
     callApi(step, google, geocoder)
       .then(
         (response) =>
+          // console.log(response),
           (imgArray[index] = {
-            img: response.photo.images.small.url,
+            img: response.photo.images.medium.url,
+            name: response.name,
             url: response.web_url,
             rating: response.rating,
             caption: response.photo.caption,
@@ -162,10 +156,6 @@ function Carbon() {
       )
       .then((img) => setRender(img));
   };
-
-  // response.rating
-  // response.web_url
-  // response.photo.caption
 
   // ----- Render JSX ---- //
   return (
@@ -217,7 +207,7 @@ function Carbon() {
 
         <div className="w-full">
           <div className="flex justify-center pt-6">
-            <GoogleMap zoom={12} mapContainerClassName="w-4/12 h-96 rounded-lg">
+            <GoogleMap zoom={12} mapContainerClassName="w-8/12 h-96 rounded-lg">
               <Marker position={center} />
               {directionRes && <DirectionsRenderer directions={directionRes} />}
             </GoogleMap>
@@ -245,8 +235,14 @@ function Carbon() {
                         {index + 1} - {step}
                       </Typography>
                       <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                        <CardMedia
+                          component="img"
+                          height="194"
+                          image=""
+                          alt=""
+                        />
                         <img
-                          className="flex justify-center rounded "
+                          className="object-contain"
                           alt=""
                           src={imgs[index].img}
                         />
@@ -258,10 +254,10 @@ function Carbon() {
                           Click here for a trip idea
                         </button>
                       </Typography>
-                      <CardMedia component="img" height="194" image="" alt="" />
                       <Typography variant="body2">
                         <br />
-                        {imgs[index].caption}
+                        {/* {imgs[index].caption} */}
+                        {imgs[index].name}
                         <br />
                         <br />
                         <a href={imgs[index].url}>Find out more</a>
