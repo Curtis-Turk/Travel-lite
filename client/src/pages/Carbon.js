@@ -12,8 +12,7 @@ import TrainIcon from "@mui/icons-material/Train";
 import PublicIcon from "@mui/icons-material/Public";
 import RouteIcon from "@mui/icons-material/Route";
 import "../index.css";
-import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { trainCalculator, planeCalculator } from "../components/CarbonCalc";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
@@ -81,7 +80,7 @@ function Carbon() {
     const directionsService = new google.maps.DirectionsService();
     let navigation = null;
     try {
-        navigation = await directionsService.route({
+      navigation = await directionsService.route({
         origin: origin,
         destination: destination,
         travelMode: google.maps.TravelMode.TRANSIT,
@@ -89,56 +88,57 @@ function Carbon() {
           modes: [google.maps.TransitMode.TRAIN],
         },
       });
-     } catch (error) {
-        navigate("/error")
+    } catch (error) {
+      navigate("/error");
     }
 
     if (navigation != null) {
-    setDirectionRes(navigation);
-    setLocationA(navigation.request.origin.query);
-    setLocationB(navigation.request.destination.query);
+      setDirectionRes(navigation);
+      setLocationA(navigation.request.origin.query);
+      setLocationB(navigation.request.destination.query);
 
-    // --------- Get navigation steps --------- //
-    const currentRoute = navigation.routes[0].legs[0];
-    let stepArr = [];
+      // --------- Get navigation steps --------- //
+      const currentRoute = navigation.routes[0].legs[0];
+      let stepArr = [];
 
-    currentRoute.steps.forEach((step) => {
-      if (step.travel_mode === "TRANSIT") {
-        stepArr.push(step.transit.arrival_stop.name);
-      }
-    });
+      currentRoute.steps.forEach((step) => {
+        if (step.travel_mode === "TRANSIT") {
+          stepArr.push(step.transit.arrival_stop.name);
+        }
+      });
 
-    setSteps(stepArr);
-    const emptyArr = stepArr.map((step) => (step = ""));
-    setImgs(emptyArr);
+      setSteps(stepArr);
+      const emptyArr = stepArr.map((step) => (step = ""));
+      setImgs(emptyArr);
 
-    // --------- Set Route Comparison details --------- //
-    const planeDistanceCalc = async () => {
-      return [
-        await geocodeLocation(origin, google, geocoder),
-        await geocodeLocation(destination, google, geocoder),
-      ];
-    };
+      // --------- Set Route Comparison details --------- //
+      const planeDistanceCalc = async () => {
+        return [
+          await geocodeLocation(origin, google, geocoder),
+          await geocodeLocation(destination, google, geocoder),
+        ];
+      };
 
-    planeDistanceCalc().then((data) =>
-      setPlaneDistance(
-        (
-          google.maps.geometry.spherical.computeDistanceBetween(
-            data[0],
-            data[1]
-          ) / 1000
-        ).toFixed()
-      )
-    );
+      planeDistanceCalc().then((data) =>
+        setPlaneDistance(
+          (
+            google.maps.geometry.spherical.computeDistanceBetween(
+              data[0],
+              data[1]
+            ) / 1000
+          ).toFixed()
+        )
+      );
 
-    setTrainDistance(currentRoute.distance.text);
-    let trainDistanceKM = navigation.routes[0].legs[0].distance.value / 1000;
-    sessionStorage.setItem(
-      "trainEmissions",
-      Math.round(trainCalculator(trainDistanceKM))
-    );
-    setTrainEmissions(Math.round(trainCalculator(trainDistanceKM)));
-  }};
+      setTrainDistance(currentRoute.distance.text);
+      let trainDistanceKM = navigation.routes[0].legs[0].distance.value / 1000;
+      sessionStorage.setItem(
+        "trainEmissions",
+        Math.round(trainCalculator(trainDistanceKM))
+      );
+      setTrainEmissions(Math.round(trainCalculator(trainDistanceKM)));
+    }
+  };
   sessionStorage.setItem("planeEmissions", planeCalculator(planeDistance));
 
   // ----- Check if API is loading ----- //
@@ -167,6 +167,8 @@ function Carbon() {
       )
       .then((img) => setRender(img));
   };
+
+  console.log(imgs);
 
   // ----- Render JSX ---- //
   return (
@@ -199,7 +201,7 @@ function Carbon() {
                 <td className="w-20 text-center">
                   <FlightTakeoffIcon />{" "}
                 </td>
-                <td className="w-48 h-20 text-center text-red-500">
+                <td className="w-48 h-20 text-center text-fuchsia-700">
                   {planeEmissions} g{" "}
                 </td>
                 <td className="w-48 h-20 text-center">{planeDistance} km</td>
@@ -208,7 +210,7 @@ function Carbon() {
               <td className="text-center">
                 <TrainIcon />
               </td>
-              <td className="w-48 h-20 text-center  text-green-400">
+              <td className="w-48 h-20 text-center  text-lime-600">
                 {trainEmissions} g{" "}
               </td>
               <td className="w-48 h-20 text-center">{trainDistance} </td>
@@ -218,7 +220,13 @@ function Carbon() {
 
         <div className="w-full">
           <div className="flex justify-center pt-6">
-            <GoogleMap zoom={12} mapContainerClassName="w-8/12 h-96 rounded-lg">
+            <GoogleMap
+              zoom={12}
+              mapContainerClassName="w-8/12 h-96 rounded-lg"
+              options={{
+                mapTypeControl: false,
+              }}
+            >
               <Marker position={center} />
               {directionRes && <DirectionsRenderer directions={directionRes} />}
             </GoogleMap>
@@ -246,17 +254,14 @@ function Carbon() {
                         {index + 1} - {step}
                       </Typography>
                       <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        <CardMedia
-                          component="img"
-                          height="194"
-                          image=""
-                          alt=""
-                        />
-                        <img
-                          className="object-contain"
-                          alt=""
-                          src={imgs[index].img}
-                        />
+                        <CardMedia className="min-h object-fit">
+                          <img
+                            src={imgs[index].img}
+                            alt=""
+                            className=" shadow rounded align-middle border-none h-40 w-72 flex justify-center object-fit"
+                          />
+                        </CardMedia>
+
                         <button
                           onClick={() => {
                             fetchStepInfo(step, index);
