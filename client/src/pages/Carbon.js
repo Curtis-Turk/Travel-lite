@@ -1,4 +1,5 @@
-import { useState, useEffect, useLayoutEffect } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   useJsApiLoader,
   GoogleMap,
@@ -20,6 +21,8 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { geocodeLocation, callApi } from "../api/locationFetch";
+import emailjs from '@emailjs/browser';
+import Modal from "react-modal";
 
 function Carbon() {
   const [libraries] = useState(["places"]);
@@ -43,10 +46,20 @@ function Carbon() {
   const [steps, setSteps] = useState([]);
   const [google, setGoogle] = useState();
   const [geocoder, setGeocoder] = useState();
-
   const [imgs, setImgs] = useState("");
   const [render, setRender] = useState("");
   const [runUpdateMap, setRunUpdateMap] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  // let tripDetails = {};
+
+
+
+  const userEmail = useRef();
+
+  function toggleModal() {
+    setIsOpen(!isOpen);
+  }
 
   useEffect(() => {
     const destination = sessionStorage.getItem("destination");
@@ -153,7 +166,7 @@ function Carbon() {
     setImgs(imgArray);
     callApi(step, google, geocoder)
       .then(
-        (response) =>
+        (response) => 
           // console.log(response),
           (imgArray[index] = {
             img: response.photo.images.medium.url,
@@ -168,6 +181,24 @@ function Carbon() {
   };
 
   console.log(imgs);
+
+
+  const sendEmail = (e) => {
+    e.preventDefault();
+
+    emailjs.send('service_s2yn5li', 'template_h5y4o1e', {
+        from_name: "Travel-Lite Info",
+        message: "Your trip: " + sessionStorage.getItem("origin") + " - " + sessionStorage.getItem("destination") +"\n" +
+          "TrainEmission for this trip are: " + sessionStorage.getItem("trainEmissions") +"\n" +
+          "Attractions " ,
+        reply_to: userEmail.current.value,
+      }, 'eRYDEyB32PsKmMAZH')
+      .then((result) => {
+          console.log(result.text);
+      }, (error) => {
+          console.log(error.text);
+      });
+  };
 
   // ----- Render JSX ---- //
   return (
@@ -218,7 +249,6 @@ function Carbon() {
             </tbody>
           </table>
         </div>
-
         <div className="w-full">
           <div className="flex justify-center pt-6">
             <GoogleMap
@@ -289,6 +319,20 @@ function Carbon() {
           </ul>
         </div>
       </div>
+      
+      <button onClick={toggleModal}>Send Trip Details</button>
+  
+      <Modal
+        isOpen={isOpen}
+        onRequestClose={toggleModal}
+        contentLabel="My adventure"
+      >
+        <div>My trip details.</div>
+        <input ref={userEmail} placeholder="name@email.com"></input>
+        <button onClick={sendEmail}> Send  </button>
+        <button onClick={toggleModal}> Close </button>
+      </Modal>
+
     </>
   );
 }

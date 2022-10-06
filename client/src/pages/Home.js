@@ -87,6 +87,7 @@ function Home() {
           save the planet... <span className="text-3xl">🌱</span></p>
       </div>
     </div>
+
   );
 }
 
