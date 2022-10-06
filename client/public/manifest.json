@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Travel-Lite",
+  "name": "Travel-Lite Website",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,14 +8,14 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "logotravelite-small.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x150"
     },
     {
-      "src": "logo512.png",
+      "src": "logotravelite.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "440x303"
     }
   ],
   "start_url": ".",

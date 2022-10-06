@@ -10,20 +10,29 @@ function Sources() {
 
   <div className="flex justify-center mt-24">
     <div className="font-mono bg-zinc-100 border rounded-3xl flex justify-center box-border h-2/3 w-2/3 p-4 mb-40 ml-24 mr-24">
-       <div className="flex justify-center"></div>
-        <h1 className="inline text-center pb-4 text-3xl mt-10"> Our sources: </h1>
-        <h2 className="inline text-center pb-4 text-2xl mt-10">
-        <br></br>
-        <br></br>
-        <li> Gridwatch.co.uk </li>
-        <br></br>
-        <li> https://ourworldindata.org/travel-carbon-footprint </li>
-        <br></br>
-        <li> https://josephpoore.com/Science%20360%206392%20987%20-%20Accepted%20Manuscript.pdf </li></h2>
-        <br></br>
-        {/* If you are not redirected, click <span className="text-lime-600"><Link to="/" className="hover:bg-gray-200">here</Link></span>.</h1> */}
+     <div className="flex justify-center"></div>
+      <table className="text-center">
+      
+        <tr className="inline text-center pb-4 text-3xl mt-10"> Our sources:</tr>
+        <tr><br /></tr>
+        <tr><li> Gridwatch.co.uk </li></tr>
+        <tr><br /></tr>
+        <tr><li> Ourworldindata.org </li></tr>
+        <tr><br /></tr>
+        <tr><li> Josephpoore.com</li></tr>
+        <tr><br /></tr>
+        <tr><li> Treesforlife.org.uk </li></tr>
+        <tr><br /></tr>
+        <tr><li> Earthly.org </li></tr>
+      </table>
     </div>
-</div>
+  </div>
+
+// links
+// https://Gridwatch.co.uk"
+// https://ourworldindata.org/travel-carbon-footprint
+// https://josephpoore.com/Science%20360%206392%20987%20-%20Accepted%20Manuscript.pdf
+//https://treesforlife.org.uk/
   )
 }
 
