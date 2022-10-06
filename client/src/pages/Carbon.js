@@ -26,7 +26,6 @@ import Modal from "react-modal";
 import { Link } from "react-router-dom";
 import co2 from "../images/co2.png";
 import email from "../images/email.png";
-import travelMap from "../images/travelMap.png";
 
 function Carbon() {
   const [libraries] = useState(["places"]);
@@ -221,44 +220,14 @@ function Carbon() {
       } else {
         stopsStr += `stop ${index}: ${step}`;
       }
-<<<<<<< HEAD
-    });
-
-    emailjs
-      .send(
-        "service_s2yn5li",
-        "template_h5y4o1e",
-        {
-          from_name: "Travel-Lite Info",
-          message:
-            "Your trip from: " +
-            sessionStorage.getItem("origin") +
-            ", to: " +
-            sessionStorage.getItem("destination") +
-            `.Train emissions for this trip are: ${sessionStorage.getItem(
-              "trainEmissions"
-            )} plane emission for this trip are: ${sessionStorage.getItem(
-              "planeEmissions"
-            )}: total carbon saved: ${
-              sessionStorage.getItem("planeEmissions") -
-              sessionStorage.getItem("trainEmissions")
-            }.  Stops are: ${stopsStr}`,
-          reply_to: userEmail.current.value,
-        },
-        "eRYDEyB32PsKmMAZH"
-      )
-      .then(
-        (result) => {
-=======
-  });
+  })
     
     emailjs.send('service_s2yn5li', 'template_h5y4o1e', {
         from_name: "Travel-Lite Info",
-        message: "Your trip from: " + sessionStorage.getItem("origin") + ", to: " + sessionStorage.getItem("destination") + `. Train emissions for this trip are: ${sessionStorage.getItem("trainEmissions")}. Plane emission for this trip are: ${sessionStorage.getItem("planeEmissions")}. Total carbon saved: ${sessionStorage.getItem("planeEmissions") - sessionStorage.getItem("trainEmissions")}.  Stops are: ${stopsStr}`,
+        message: "Your trip from: " + sessionStorage.getItem("origin") + ", to: " + sessionStorage.getItem("destination") + `.Train emissions for this trip are: ${sessionStorage.getItem("trainEmissions")} plane emission for this trip are: ${sessionStorage.getItem("planeEmissions")}: total carbon saved: ${sessionStorage.getItem("planeEmissions") - sessionStorage.getItem("trainEmissions")}.  Stops are: ${stopsStr}`,
         reply_to: userEmail.current.value,
       }, 'eRYDEyB32PsKmMAZH')
       .then((result) => {
->>>>>>> a026c8851cca3d20cb80989e960ca7a878bffde2
           console.log(result.text);
         },
         (error) => {
@@ -404,11 +373,6 @@ function Carbon() {
                       >
                         {index + 1} - {step}
                       </Typography>
-<<<<<<< HEAD
-=======
-                      <Typography sx={{ mb: 1.5 }} color="text.secondary" className="font-mono">
->>>>>>> a026c8851cca3d20cb80989e960ca7a878bffde2
-
                       <Typography sx={{ mb: 1.5 }} color="text.secondary" className="font-mono">
                         <button
                           onClick={() => {
