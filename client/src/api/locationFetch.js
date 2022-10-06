@@ -27,7 +27,7 @@ export const locationOptions = (locationLatLong) => {
       lang: "en_US",
     },
     headers: {
-      "X-RapidAPI-Key": "b9a2e608eamsh6da9fcbe7b3f84ep1e3c40jsn2484d22a233f",
+      "X-RapidAPI-Key": "613284f43emshe3a15f7036c32e7p13062fjsn9ccc48546cd2",
       "X-RapidAPI-Host": "travel-advisor.p.rapidapi.com",
     },
   };
