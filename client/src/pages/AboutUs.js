@@ -8,7 +8,7 @@ import team from "../images/team.png";
 function AboutUs() {
   return (
     <div className="flex justify-center mt-24">
-      <div className="bg-zinc-100 border rounded-3xl flex justify-center box-border h-2/3 w-2/5 p-4 mb-20">
+      <div className="bg-zinc-100 rounded-3xl flex justify-center h-2/5 w-2/5 p-4 mb-20">
         <div className="font-mono">
           <div className="flex justify-center">
             <img
@@ -57,7 +57,7 @@ function AboutUs() {
             Meet the team
           </h2>
           <div className="flex justify-center">
-            <div className="w-3/5 grid grid-cols-3 gap-5">
+            <div className="w-3/5 grid grid-cols-3 gap-5 mb-10">
               <img
                 className="scale-100 hover:scale-110 ease-in duration-400 rounded-lg"
                 src={eve}

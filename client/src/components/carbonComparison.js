@@ -7,7 +7,9 @@ const items = {
   "bulb": 79400,
   "beef": 50000,
   "shower": 3066,
-  "coffee": 280
+  "coffee": 280,
+  "netflix": 55,
+  "tshirt": 2000
 };
 
 export const carbonComparisonCalc = (item) => {
