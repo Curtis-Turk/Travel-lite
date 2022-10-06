@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Sources() {
   return (
 //     <p>Our sources:
@@ -15,15 +17,15 @@ function Sources() {
       
         <tr className="inline text-center pb-4 text-3xl mt-10"> Our sources:</tr>
         <tr><br /></tr>
-        <tr><li> Gridwatch.co.uk </li></tr>
+        <tr><li> <Link to ="Gridwatch.co.uk" className="text-lime-600 hover:bg-gray-200">Gridwatch</Link> </li></tr>
         <tr><br /></tr>
-        <tr><li> Ourworldindata.org </li></tr>
+        <tr><li> <Link to ="Ourworldindata.org" className="text-lime-600 hover:bg-gray-200">Ourworldindata</Link> </li></tr>
         <tr><br /></tr>
-        <tr><li> Josephpoore.com</li></tr>
+        <tr><li> <Link to ="Josephpoore.com" className="text-lime-600 hover:bg-gray-200">Josephpoore</Link></li></tr>
         <tr><br /></tr>
-        <tr><li> Treesforlife.org.uk </li></tr>
+        <tr><li> <Link to ="Treesforlife.org.uk" className="text-lime-600 hover:bg-gray-200">Treesforlife</Link></li></tr>
         <tr><br /></tr>
-        <tr><li> Earthly.org </li></tr>
+        <tr><li> <Link to ="Earthly.org" className="text-lime-600 hover:bg-gray-200">Earthly </Link></li></tr>
       </table>
     </div>
   </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
-import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
+import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 import {
   useJsApiLoader,
   GoogleMap,
@@ -143,7 +143,6 @@ function Carbon() {
         )
       );
 
-
       setTrainDistance(currentRoute.distance.text);
       let trainDistanceKM = navigation.routes[0].legs[0].distance.value / 1000;
       sessionStorage.setItem(
@@ -184,23 +183,42 @@ function Carbon() {
 
   const sendEmail = (e) => {
     e.preventDefault();
-    let stopsStr = ""
+    let stopsStr = "";
     steps.forEach((step, index) => {
-      if(imgs[index].name !== undefined){
+      if (imgs[index].name !== undefined) {
         stopsStr += `stop ${index}: ${step} - 
         ${imgs[index].name} 
-        click for info ${imgs[index].url}`
-      }else{
-      stopsStr += (`stop ${index}: ${step}`)
+        click for info ${imgs[index].url}`;
+      } else {
+        stopsStr += `stop ${index}: ${step}`;
       }
-  });
-    
-    emailjs.send('service_s2yn5li', 'template_h5y4o1e', {
-        from_name: "Travel-Lite Info",
-        message: "Your trip from: " + sessionStorage.getItem("origin") + ", to: " + sessionStorage.getItem("destination") + `.Train emissions for this trip are: ${sessionStorage.getItem("trainEmissions")} plane emission for this trip are: ${sessionStorage.getItem("planeEmissions")}: total carbon saved: ${sessionStorage.getItem("planeEmissions") - sessionStorage.getItem("trainEmissions")}.  Stops are: ${stopsStr}`,
-        reply_to: userEmail.current.value,
-      }, 'eRYDEyB32PsKmMAZH')
-      .then((result) => {
+    });
+
+    emailjs
+      .send(
+        "service_s2yn5li",
+        "template_h5y4o1e",
+        {
+          from_name: "Travel-Lite Info",
+          message:
+            "Your trip from: " +
+            sessionStorage.getItem("origin") +
+            ", to: " +
+            sessionStorage.getItem("destination") +
+            `.Train emissions for this trip are: ${sessionStorage.getItem(
+              "trainEmissions"
+            )} plane emission for this trip are: ${sessionStorage.getItem(
+              "planeEmissions"
+            )}: total carbon saved: ${
+              sessionStorage.getItem("planeEmissions") -
+              sessionStorage.getItem("trainEmissions")
+            }.  Stops are: ${stopsStr}`,
+          reply_to: userEmail.current.value,
+        },
+        "eRYDEyB32PsKmMAZH"
+      )
+      .then(
+        (result) => {
           console.log(result.text);
         },
         (error) => {
@@ -273,7 +291,9 @@ function Carbon() {
           my carbon emissions!
         </div>
         <div className="flex justify-center mb-10">
-          <span><img className="w-8 mr-2" src={email} alt="Email"></img></span>
+          <span>
+            <img className="w-8 mr-2" src={email} alt="Email"></img>
+          </span>
           <button
             onClick={toggleModal}
             className="hover:bg-gray-100 text-lime-600 mr-2 mb-2"
@@ -310,13 +330,13 @@ function Carbon() {
           <h3 className="text-black-400 underline pb-4 font-mono ">
             Your Trip Details
           </h3>
-          <div className="pl-2">  
-          <ForwardToInboxIcon
-            className="hover:text-gray-400 cursor-pointer"
-            type="submit"
-            id="email_toggle"
-            onClick={toggleModal}
-          />
+          <div className="pl-2">
+            <ForwardToInboxIcon
+              className="hover:text-gray-400 cursor-pointer"
+              type="submit"
+              id="email_toggle"
+              onClick={toggleModal}
+            />
           </div>
         </div>
         <div className="flex justify-center">
@@ -335,14 +355,11 @@ function Carbon() {
                       >
                         {index + 1} - {step}
                       </Typography>
-                      <Typography sx={{ mb: 1.5 }} color="text.secondary" className="font-mono">
-                        <CardMedia
-                          component="img"
-                          height="194"
-                          image=""
-                          alt=""
-                        />
-
+                      <Typography
+                        sx={{ mb: 1.5 }}
+                        color="text.secondary"
+                        className="font-mono"
+                      >
                         <img
                           src={imgs[index].img}
                           alt=""
