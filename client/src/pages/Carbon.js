@@ -26,6 +26,7 @@ import Modal from "react-modal";
 import { Link } from "react-router-dom";
 import co2 from "../images/co2.png";
 import email from "../images/email.png";
+import travelMap from "../images/travelMap.png";
 
 function Carbon() {
   const [libraries] = useState(["places"]);
@@ -197,7 +198,7 @@ function Carbon() {
     
     emailjs.send('service_s2yn5li', 'template_h5y4o1e', {
         from_name: "Travel-Lite Info",
-        message: "Your trip from: " + sessionStorage.getItem("origin") + ", to: " + sessionStorage.getItem("destination") + `.Train emissions for this trip are: ${sessionStorage.getItem("trainEmissions")} plane emission for this trip are: ${sessionStorage.getItem("planeEmissions")}: total carbon saved: ${sessionStorage.getItem("planeEmissions") - sessionStorage.getItem("trainEmissions")}.  Stops are: ${stopsStr}`,
+        message: "Your trip from: " + sessionStorage.getItem("origin") + ", to: " + sessionStorage.getItem("destination") + `. Train emissions for this trip are: ${sessionStorage.getItem("trainEmissions")}. Plane emission for this trip are: ${sessionStorage.getItem("planeEmissions")}. Total carbon saved: ${sessionStorage.getItem("planeEmissions") - sessionStorage.getItem("trainEmissions")}.  Stops are: ${stopsStr}`,
         reply_to: userEmail.current.value,
       }, 'eRYDEyB32PsKmMAZH')
       .then((result) => {
@@ -287,10 +288,19 @@ function Carbon() {
           onRequestClose={toggleModal}
           contentLabel="My adventure"
         >
-          <div>My trip details.</div>
-          <input ref={userEmail} placeholder="name@email.com"></input>
-          <button onClick={sendEmail}> Send </button>
-          <button onClick={toggleModal}> Close </button>
+        <div>
+        <div className="pt-20">
+          <div className="text-black-400 underline pb-4 font-mono" > Trip details </div>
+        </div>
+          <div class="mb-4">
+            <label class="pt-30 pr-50 text-gray-700 text-sm font-bold mb-2" for="email">
+               Your email address: 
+            </label>
+            <input className= "block py-2 mr-3 my-3" ref={userEmail} placeholder="name@email.com"></input>
+            <button class="bg-lime-500 hover:bg-lime-700 text-white font-bold py-2 px-4 mr-3 my-3 rounded-full" onClick={sendEmail}> Send </button>
+            <button class="bg-lime-500 hover:bg-lime-700 text-white font-bold space-x-2 ml-3 my-3 py-2 px-4 rounded-full" onClick={toggleModal}> Close </button>
+          </div>
+        </div>
         </Modal>
         <div className="w-full">
           <div className="flex justify-center pt-6">
@@ -336,12 +346,6 @@ function Carbon() {
                         {index + 1} - {step}
                       </Typography>
                       <Typography sx={{ mb: 1.5 }} color="text.secondary" className="font-mono">
-                        <CardMedia
-                          component="img"
-                          height="194"
-                          image=""
-                          alt=""
-                        />
 
                         <img
                           src={imgs[index].img}
