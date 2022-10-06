@@ -14,7 +14,7 @@ function Footer() {
         </span>{" "}
         <span className="inline text-sm text-gray-500 sm:text-center dark:text-gray-400">
           <Link to="/aboutus" className="text-lime-600 hover:bg-gray-200">
-            About Us
+            About Us.
           </Link>
         </span>
       </footer>

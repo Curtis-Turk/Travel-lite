@@ -19,7 +19,6 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import CardMedia from "@mui/material/CardMedia";
 import { geocodeLocation, callApi } from "../api/locationFetch";
 
 function Carbon() {
@@ -204,7 +203,9 @@ function Carbon() {
                 <td className="w-48 h-20 text-center text-fuchsia-700">
                   {planeEmissions} g{" "}
                 </td>
-                <td className="w-48 h-20 text-center">{planeDistance} km</td>
+                <td className="w-48 h-20 text-center">
+                  {planeDistance.toLocaleString()} km
+                </td>
               </tr>
 
               <td className="text-center">
@@ -254,13 +255,12 @@ function Carbon() {
                         {index + 1} - {step}
                       </Typography>
                       <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        <CardMedia className="min-h object-fit">
-                          <img
-                            src={imgs[index].img}
-                            alt=""
-                            className=" shadow rounded align-middle border-none h-40 w-72 flex justify-center object-fit"
-                          />
-                        </CardMedia>
+                        <img
+                          src={imgs[index].img}
+                          alt=""
+                          loading="lazy"
+                          className=" rounded align-middle border-none h-40 w-72 flex justify-center object-fit"
+                        />
 
                         <button
                           onClick={() => {
