@@ -84,6 +84,7 @@ function Home() {
         <p>Plan your adventure, see more of the world, save the planet...</p>
       </div>
     </div>
+
   );
 }
 

@@ -1,4 +1,5 @@
-import { useState, useEffect, useLayoutEffect } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   useJsApiLoader,
   GoogleMap,
@@ -22,6 +23,8 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import CardMedia from "@mui/material/CardMedia";
 import { geocodeLocation, callApi } from "../api/locationFetch";
+import emailjs from '@emailjs/browser';
+import Modal from "react-modal";
 
 function Carbon() {
   const [libraries] = useState(["places"]);
@@ -45,10 +48,16 @@ function Carbon() {
   const [steps, setSteps] = useState([]);
   const [google, setGoogle] = useState();
   const [geocoder, setGeocoder] = useState();
-
   const [imgs, setImgs] = useState("");
   const [render, setRender] = useState("");
   const [runUpdateMap, setRunUpdateMap] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const userEmail = useRef();
+
+  function toggleModal() {
+    setIsOpen(!isOpen);
+  }
 
   useEffect(() => {
     const destination = sessionStorage.getItem("destination");
@@ -168,6 +177,23 @@ function Carbon() {
       .then((img) => setRender(img));
   };
 
+
+
+  const sendEmail = (e) => {
+    e.preventDefault();
+
+    emailjs.send('service_s2yn5li', 'template_h5y4o1e', {
+        from_name: "Travel-Lite Info",
+        message: "Your trip: " + sessionStorage.getItem("origin") + " - " + sessionStorage.getItem("destination") + "-",
+        reply_to: userEmail.current.value,
+      }, 'eRYDEyB32PsKmMAZH')
+      .then((result) => {
+          console.log(result.text);
+      }, (error) => {
+          console.log(error.text);
+      });
+  };
+
   // ----- Render JSX ---- //
   return (
     <>
@@ -215,7 +241,6 @@ function Carbon() {
             </tbody>
           </table>
         </div>
-
         <div className="w-full">
           <div className="flex justify-center pt-6">
             <GoogleMap zoom={12} mapContainerClassName="w-8/12 h-96 rounded-lg">
@@ -284,6 +309,20 @@ function Carbon() {
           </ul>
         </div>
       </div>
+      
+      <button onClick={toggleModal}>Send Trip Details</button>
+  
+      <Modal
+        isOpen={isOpen}
+        onRequestClose={toggleModal}
+        contentLabel="My adventure"
+      >
+        <div>My trip details.</div>
+        <input ref={userEmail} placeholder="name@email.com"></input>
+        <button onClick={sendEmail}> Send  </button>
+        <button onClick={toggleModal}> Close </button>
+      </Modal>
+
     </>
   );
 }
