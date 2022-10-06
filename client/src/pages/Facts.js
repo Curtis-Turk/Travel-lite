@@ -11,6 +11,7 @@ import {
   carbonComparisonCalc,
 } from "../components/carbonComparison";
 import { Link } from "react-router-dom";
+import back from "../images/back.png";
 
 function Facts() {
   const [origin, setOrigin] = useState("");
@@ -41,10 +42,11 @@ function Facts() {
   // cup of coffee - 280g (UCL)
 
   return (
+    
     <div className="flex justify-center mt-24">
       <div className="font-mono bg-zinc-100 border rounded-3xl flex justify-center box-border h-3/5 w-3/5 p-4 mb-20">
         <div className="flex justify-center"></div>
-        <div className="mt-20 mb-10 ml-24 mr-24">
+        <div className="mt-10 mb-10 ml-24 mr-24"> <Link to="/carbon"><img className="w-24 m-auto mb-10" src={back} alt="Back" /></Link>
           <h1 className="inline text-center font-bold pb-4 text-3xl">
             Your trip from <span className="text-fuchsia-700">{origin}</span> to{" "}
             <span className="text-fuchsia-700">{destination}</span> will save
