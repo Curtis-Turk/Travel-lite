@@ -34,7 +34,7 @@ function Home() {
 
   return (
     <div className="font-mono pt-12">
-      <h1 className="mt-20 flex justify-center font-bold pb-4 text-2xl">
+      <h1 className="flex justify-center font-bold pb-4 text-2xl">
         Where would you like to go?
       </h1>
       <div className="flex justify-center ">
@@ -77,13 +77,17 @@ function Home() {
         <img
           src={world}
           alt="World"
-          className="object-contain w-1/3 h-1/3"
+          className="object-contain w-2/6"
         ></img>
       </div>
-      <div className="flex justify-center text-xl mb-20">
-        <p>Plan your adventure, see more of the world, save the planet...</p>
+      <div className="flex justify-center text-center text-xl">
+        <p>Plan your adventure, see more of the world, 
+          <br></br>
+          <br></br>
+          save the planet... <span className="text-3xl">🌱</span></p>
       </div>
     </div>
+
   );
 }
 

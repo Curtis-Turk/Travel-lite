@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Sources() {
   return (
 //     <p>Our sources:
@@ -8,22 +10,31 @@ function Sources() {
 //   )
 // }
 
-  <div className="flex justify-center mt-24">
-    <div className="font-mono bg-zinc-100 border rounded-3xl flex justify-center box-border h-2/3 w-2/3 p-4 mb-40 ml-24 mr-24">
-       <div className="flex justify-center"></div>
-        <h1 className="inline text-center pb-4 text-3xl mt-10"> Our sources: </h1>
-        <h2 className="inline text-center pb-4 text-2xl mt-10">
-        <br></br>
-        <br></br>
-        <li> Gridwatch.co.uk </li>
-        <br></br>
-        <li> https://ourworldindata.org/travel-carbon-footprint </li>
-        <br></br>
-        <li> https://josephpoore.com/Science%20360%206392%20987%20-%20Accepted%20Manuscript.pdf </li></h2>
-        <br></br>
-        {/* If you are not redirected, click <span className="text-lime-600"><Link to="/" className="hover:bg-gray-200">here</Link></span>.</h1> */}
+  <div className="flex justify-center mt-44">
+    <div className="font-mono bg-zinc-100 border rounded-3xl flex justify-center box-border h-2/5 w-2/5 p-4 mb-40 ml-24 mr-24">
+     <div className="flex justify-center"></div>
+      <table className="mt-10 mb-10 text-center">
+      
+        <tr className="inline text-center pb-4 text-3xl mt-10"> Our sources:</tr>
+        <tr><br /></tr>
+        <tr><li> <Link to ="Gridwatch.co.uk" className="text-lime-600 hover:bg-gray-200">Gridwatch</Link> </li></tr>
+        <tr><br /></tr>
+        <tr><li> <Link to ="Ourworldindata.org" className="text-lime-600 hover:bg-gray-200">Ourworldindata</Link> </li></tr>
+        <tr><br /></tr>
+        <tr><li> <Link to ="Josephpoore.com" className="text-lime-600 hover:bg-gray-200">Josephpoore</Link></li></tr>
+        <tr><br /></tr>
+        <tr><li> <Link to ="Treesforlife.org.uk" className="text-lime-600 hover:bg-gray-200">Treesforlife</Link></li></tr>
+        <tr><br /></tr>
+        <tr><li> <Link to ="Earthly.org" className="text-lime-600 hover:bg-gray-200">Earthly </Link></li></tr>
+      </table>
     </div>
-</div>
+  </div>
+
+// links
+// https://Gridwatch.co.uk"
+// https://ourworldindata.org/travel-carbon-footprint
+// https://josephpoore.com/Science%20360%206392%20987%20-%20Accepted%20Manuscript.pdf
+//https://treesforlife.org.uk/
   )
 }
 
