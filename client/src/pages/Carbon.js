@@ -23,8 +23,11 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import CardMedia from "@mui/material/CardMedia";
 import { geocodeLocation, callApi } from "../api/locationFetch";
-import emailjs from '@emailjs/browser';
+import emailjs from "@emailjs/browser";
 import Modal from "react-modal";
+import { Link } from "react-router-dom";
+import co2 from "../images/co2.png";
+import email from "../images/email.png";
 
 function Carbon() {
   const [libraries] = useState(["places"]);
@@ -54,8 +57,6 @@ function Carbon() {
   const [isOpen, setIsOpen] = useState(false);
 
   // let tripDetails = {};
-
-
 
   const userEmail = useRef();
 
@@ -94,7 +95,7 @@ function Carbon() {
     const directionsService = new google.maps.DirectionsService();
     let navigation = null;
     try {
-        navigation = await directionsService.route({
+      navigation = await directionsService.route({
         origin: origin,
         destination: destination,
         travelMode: google.maps.TravelMode.TRANSIT,
@@ -102,56 +103,57 @@ function Carbon() {
           modes: [google.maps.TransitMode.TRAIN],
         },
       });
-     } catch (error) {
-        navigate("/error")
+    } catch (error) {
+      navigate("/error");
     }
 
     if (navigation != null) {
-    setDirectionRes(navigation);
-    setLocationA(navigation.request.origin.query);
-    setLocationB(navigation.request.destination.query);
+      setDirectionRes(navigation);
+      setLocationA(navigation.request.origin.query);
+      setLocationB(navigation.request.destination.query);
 
-    // --------- Get navigation steps --------- //
-    const currentRoute = navigation.routes[0].legs[0];
-    let stepArr = [];
+      // --------- Get navigation steps --------- //
+      const currentRoute = navigation.routes[0].legs[0];
+      let stepArr = [];
 
-    currentRoute.steps.forEach((step) => {
-      if (step.travel_mode === "TRANSIT") {
-        stepArr.push(step.transit.arrival_stop.name);
-      }
-    });
+      currentRoute.steps.forEach((step) => {
+        if (step.travel_mode === "TRANSIT") {
+          stepArr.push(step.transit.arrival_stop.name);
+        }
+      });
 
-    setSteps(stepArr);
-    const emptyArr = stepArr.map((step) => (step = ""));
-    setImgs(emptyArr);
+      setSteps(stepArr);
+      const emptyArr = stepArr.map((step) => (step = ""));
+      setImgs(emptyArr);
 
-    // --------- Set Route Comparison details --------- //
-    const planeDistanceCalc = async () => {
-      return [
-        await geocodeLocation(origin, google, geocoder),
-        await geocodeLocation(destination, google, geocoder),
-      ];
-    };
+      // --------- Set Route Comparison details --------- //
+      const planeDistanceCalc = async () => {
+        return [
+          await geocodeLocation(origin, google, geocoder),
+          await geocodeLocation(destination, google, geocoder),
+        ];
+      };
 
-    planeDistanceCalc().then((data) =>
-      setPlaneDistance(
-        (
-          google.maps.geometry.spherical.computeDistanceBetween(
-            data[0],
-            data[1]
-          ) / 1000
-        ).toFixed()
+      planeDistanceCalc().then((data) =>
+        setPlaneDistance(
+          (
+            google.maps.geometry.spherical.computeDistanceBetween(
+              data[0],
+              data[1]
+            ) / 1000
+          ).toFixed()
+        ), 
       )
-    );
 
-    setTrainDistance(currentRoute.distance.text);
-    let trainDistanceKM = navigation.routes[0].legs[0].distance.value / 1000;
-    sessionStorage.setItem(
-      "trainEmissions",
-      Math.round(trainCalculator(trainDistanceKM))
-    );
-    setTrainEmissions(Math.round(trainCalculator(trainDistanceKM)));
-  }};
+      setTrainDistance(currentRoute.distance.text);
+      let trainDistanceKM = navigation.routes[0].legs[0].distance.value / 1000;
+      sessionStorage.setItem(
+        "trainEmissions",
+        Math.round(trainCalculator(trainDistanceKM))
+      );
+      setTrainEmissions(Math.round(trainCalculator(trainDistanceKM)));
+    }
+  };
   sessionStorage.setItem("planeEmissions", planeCalculator(planeDistance));
 
   // ----- Check if API is loading ----- //
@@ -167,7 +169,7 @@ function Carbon() {
     setImgs(imgArray);
     callApi(step, google, geocoder)
       .then(
-        (response) => 
+        (response) =>
           // console.log(response),
           (imgArray[index] = {
             img: response.photo.images.medium.url,
@@ -181,36 +183,50 @@ function Carbon() {
       .then((img) => setRender(img));
   };
 
-
-
   const sendEmail = (e) => {
     e.preventDefault();
 
-    emailjs.send('service_s2yn5li', 'template_h5y4o1e', {
-        from_name: "Travel-Lite Info",
-        message: "Your trip: " + sessionStorage.getItem("origin") + " - " + sessionStorage.getItem("destination") +"\n" +
-          "TrainEmission for this trip are: " + sessionStorage.getItem("trainEmissions") +"\n" +
-          "Attractions " ,
-        reply_to: userEmail.current.value,
-      }, 'eRYDEyB32PsKmMAZH')
-      .then((result) => {
+    emailjs
+      .send(
+        "service_s2yn5li",
+        "template_h5y4o1e",
+        {
+          from_name: "Travel-Lite Info",
+          message:
+            "Your trip: " +
+            sessionStorage.getItem("origin") +
+            " - " +
+            sessionStorage.getItem("destination") +
+            "\n" +
+            "TrainEmission for this trip are: " +
+            sessionStorage.getItem("trainEmissions") +
+            "\n" +
+            "Attractions ",
+          reply_to: userEmail.current.value,
+        },
+        "eRYDEyB32PsKmMAZH"
+      )
+      .then(
+        (result) => {
           console.log(result.text);
-      }, (error) => {
+        },
+        (error) => {
           console.log(error.text);
-      });
+        }
+      );
   };
 
   // ----- Render JSX ---- //
   return (
     <>
       <div className="font-mono pt-4">
-        <div className="flex justify-center pb-2">
+        <div className="flex justify-center pb-2 mt-10">
           <h1 id="location">
-            <span className="p-6 text-xl">{locationA}</span>
+            <span className="font-bold p-6 text-2xl">{locationA}</span>
             <span>
               <ArrowRightAltIcon />
             </span>
-            <span className="p-6 text-xl">{locationB}</span>
+            <span className="font-bold p-6 text-2xl">{locationB}</span>
           </h1>
         </div>
         <div className="flex justify-center pt-10">
@@ -218,10 +234,10 @@ function Carbon() {
             <thead>
               <tr>
                 <th></th>
-                <th>
+                <th className="text-xl">
                   <PublicIcon /> CO₂
                 </th>
-                <th className="">
+                <th className="text-xl">
                   <RouteIcon /> Distance
                 </th>
               </tr>
@@ -231,22 +247,56 @@ function Carbon() {
                 <td className="w-20 text-center">
                   <FlightTakeoffIcon />{" "}
                 </td>
-                <td className="w-48 h-20 text-center text-red-500">
-                  {planeEmissions} g{" "}
+                <td className="w-48 h-20 text-center text-fuchsia-700 text-lg">
+                  {planeEmissions.toLocaleString()} g{" "}
                 </td>
-                <td className="w-48 h-20 text-center">{planeDistance} km</td>
+                <td className="w-48 h-20 text-center text-lg">
+                  {planeDistance.toLocaleString()} km
+                </td>
               </tr>
 
               <td className="text-center">
                 <TrainIcon />
               </td>
-              <td className="w-48 h-20 text-center  text-green-400">
-                {trainEmissions} g{" "}
+              <td className="w-48 h-20 text-center text-lg text-lime-600">
+                {trainEmissions.toLocaleString()} g{" "}
               </td>
-              <td className="w-48 h-20 text-center">{trainDistance} </td>
+              <td className="w-48 h-20 text-center text-lg">
+                {trainDistance.toLocaleString()}{" "}
+              </td>
             </tbody>
           </table>
         </div>
+        <div className="flex justify-center mt-10">
+          <img className="inline w-8" src={co2} alt="Co2" />
+          <Link
+            to="/facts"
+            className="hover:bg-gray-200 ml-2 mr-3 text-lime-600"
+          >
+            Calculate
+          </Link>
+          my carbon emissions!
+        </div>
+        <div className="flex justify-center mb-10">
+          <span><img className="w-8 mr-2" src={email} alt="Email"></img></span>
+          <button
+            onClick={toggleModal}
+            className="hover:bg-gray-100 text-lime-600 mr-2 mb-2"
+          >
+            Email
+          </button>{" "}
+          me my adventure!
+        </div>
+        <Modal
+          isOpen={isOpen}
+          onRequestClose={toggleModal}
+          contentLabel="My adventure"
+        >
+          <div>My trip details.</div>
+          <input ref={userEmail} placeholder="name@email.com"></input>
+          <button onClick={sendEmail}> Send </button>
+          <button onClick={toggleModal}> Close </button>
+        </Modal>
         <div className="w-full">
           <div className="flex justify-center pt-6">
             <GoogleMap zoom={12} mapContainerClassName="w-8/12 h-96 rounded-lg">
@@ -260,9 +310,8 @@ function Carbon() {
             Your Trip Details
           </h3>
         </div>
-
         <div className="flex justify-center">
-          <ul className=" flex list-none">
+          <ul className="flex list-none">
             {steps?.map((step, index) => {
               return (
                 <>
@@ -273,6 +322,7 @@ function Carbon() {
                         color="text.secondary"
                         gutterBottom
                         id="step_list"
+                        className="font-mono"
                       >
                         {index + 1} - {step}
                       </Typography>
@@ -315,20 +365,6 @@ function Carbon() {
           </ul>
         </div>
       </div>
-      
-      <button onClick={toggleModal}>Send Trip Details</button>
-  
-      <Modal
-        isOpen={isOpen}
-        onRequestClose={toggleModal}
-        contentLabel="My adventure"
-      >
-        <div>My trip details.</div>
-        <input ref={userEmail} placeholder="name@email.com"></input>
-        <button onClick={sendEmail}> Send  </button>
-        <button onClick={toggleModal}> Close </button>
-      </Modal>
-
     </>
   );
 }

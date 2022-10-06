@@ -8,10 +8,10 @@ function Sources() {
 //   )
 // }
 
-  <div className="flex justify-center mt-24">
-    <div className="font-mono bg-zinc-100 border rounded-3xl flex justify-center box-border h-2/3 w-2/3 p-4 mb-40 ml-24 mr-24">
+  <div className="flex justify-center mt-44">
+    <div className="font-mono bg-zinc-100 border rounded-3xl flex justify-center box-border h-2/5 w-2/5 p-4 mb-40 ml-24 mr-24">
      <div className="flex justify-center"></div>
-      <table className="text-center">
+      <table className="mt-10 mb-10 text-center">
       
         <tr className="inline text-center pb-4 text-3xl mt-10"> Our sources:</tr>
         <tr><br /></tr>
