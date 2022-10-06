@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 import {
   useJsApiLoader,
@@ -20,7 +20,6 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import CardMedia from "@mui/material/CardMedia";
 import { geocodeLocation, callApi, getRandomInt } from "../api/locationFetch";
 import emailjs from "@emailjs/browser";
 import Modal from "react-modal";
@@ -385,13 +384,7 @@ function Carbon() {
                         {index + 1} - {step}
                       </Typography>
 
-                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        <CardMedia
-                          component="img"
-                          height="194"
-                          image=""
-                          alt=""
-                        />
+                      <Typography sx={{ mb: 1.5 }} color="text.secondary" className="font-mono">
                         <button
                           onClick={() => {
                             fetchStepInfo(step, index);
@@ -399,22 +392,13 @@ function Carbon() {
                         >
                           Click here for a trip idea
                         </button>
-
-                      <Typography
-                        sx={{ mb: 1.5 }}
-                        color="text.secondary"
-                        className="font-mono"
-                      >
-
                         <img
                           src={imgs[index].img}
                           alt=""
                           loading="lazy"
-                          className=" rounded align-middle border-none h-40 w-72 flex justify-center object-fit"
+                          className=" rounded align-middle border-none h-40 w-72 flex justify-center object-contain"
                         />
-
                         <br></br>
-
                         <button
                           onClick={() => {
                             resetStepImg(step, index);
