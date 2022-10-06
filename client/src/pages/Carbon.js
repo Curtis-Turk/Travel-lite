@@ -21,7 +21,7 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import CardMedia from "@mui/material/CardMedia";
-import { geocodeLocation, callApi } from "../api/locationFetch";
+import { geocodeLocation, callApi, getRandomInt } from "../api/locationFetch";
 
 function Carbon() {
   const [libraries] = useState(["places"]);
@@ -46,6 +46,7 @@ function Carbon() {
   const [google, setGoogle] = useState();
   const [geocoder, setGeocoder] = useState();
 
+  const [stepData, setStepData] = useState([])
   const [imgs, setImgs] = useState("");
   const [render, setRender] = useState("");
   const [runUpdateMap, setRunUpdateMap] = useState(false);
@@ -111,6 +112,7 @@ function Carbon() {
       setSteps(stepArr);
       const emptyArr = stepArr.map((step) => (step = ""));
       setImgs(emptyArr);
+      setStepData(emptyArr)
 
       // --------- Set Route Comparison details --------- //
       const planeDistanceCalc = async () => {
@@ -149,24 +151,48 @@ function Carbon() {
 
   const fetchStepInfo = (step, index) => {
     let imgArray = [...imgs];
+    let dataArray = [...stepData];
     imgArray[index] = {
       img: "https://media2.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif?cid=790b7611c5ecd6019dbf660f422e47974be9b67adc5fca1a&rid=giphy.gif&ct=g",
     };
     setImgs(imgArray);
     callApi(step, google, geocoder)
       .then(
-        (response) =>
-          (imgArray[index] = {
-            img: response.photo.images.medium.url,
-            name: response.name,
-            url: response.web_url,
-            rating: response.rating,
-            caption: response.photo.caption,
-          }),
-        setImgs(imgArray)
+        (response) => {
+          dataArray[index] = response
+          setStepData(dataArray)
+          checkForPhotoThenSet(imgArray, response, index, 0)
+        }
       )
       .then((img) => setRender(img));
   };
+
+  const checkForPhotoThenSet = (imgArray, response, index, indexToCheck) => {
+    if(response[indexToCheck].photo === undefined){
+      checkForPhotoThenSet(imgArray, response, indexToCheck + 1)
+    }
+    imgArray[index] = {
+      img: response[indexToCheck].photo.images.medium.url,
+      name: response[indexToCheck].name,
+      url: response[indexToCheck].web_url,
+      rating: response[indexToCheck].rating,
+      caption: response[indexToCheck].photo.caption,
+    }
+    setImgs(imgArray)
+  }
+
+  const resetStepImg = (step, index) => {
+    let newAttraction = stepData[index][getRandomInt(0,30)]
+    let imgArray = [...imgs]
+    imgArray[index] = {
+      img: newAttraction.photo.images.medium.url,
+      name: newAttraction.name,
+      url: newAttraction.web_url,
+      rating: newAttraction.rating,
+      caption: newAttraction.photo.caption,
+    }
+    setImgs(imgArray)
+  }
 
   // ----- Render JSX ---- //
   return (
@@ -252,17 +278,25 @@ function Carbon() {
                           image=""
                           alt=""
                         />
-                        <img
-                          className="object-contain"
-                          alt=""
-                          src={imgs[index].img}
-                        />
                         <button
                           onClick={() => {
                             fetchStepInfo(step, index);
                           }}
                         >
                           Click here for a trip idea
+                        </button>
+                        <img
+                          className="object-contain"
+                          alt=""
+                          src={imgs[index].img}
+                        />
+                        <br></br>
+                        <button
+                          onClick={() => {
+                            resetStepImg(step, index);
+                          }}
+                        >
+                          Try another idea
                         </button>
                       </Typography>
                       <Typography variant="body2">

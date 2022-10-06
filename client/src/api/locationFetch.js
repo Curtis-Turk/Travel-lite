@@ -33,7 +33,7 @@ export const locationOptions = (locationLatLong) => {
   };
 };
 
-const getRandomInt = (min, max) => {
+export const getRandomInt = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min);
@@ -44,7 +44,7 @@ export const callApi = async (step, google, geocoder) => {
   const fetchOptions = locationOptions(location);
   try {
     const { data: response } = await axios.request(fetchOptions); //use data destructuring to get data from the promise object
-    return await response.data[getRandomInt(0, 20)];
+    return await response.data;
   } catch (error) {
     console.log(error);
   }
