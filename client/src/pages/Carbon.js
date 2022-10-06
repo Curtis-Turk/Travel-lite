@@ -1,5 +1,5 @@
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
-import SearchIcon from "@mui/icons-material/Search";
+import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 import {
   useJsApiLoader,
   GoogleMap,
@@ -185,29 +185,23 @@ function Carbon() {
 
   const sendEmail = (e) => {
     e.preventDefault();
-
-    emailjs
-      .send(
-        "service_s2yn5li",
-        "template_h5y4o1e",
-        {
-          from_name: "Travel-Lite Info",
-          message:
-            "Your trip: " +
-            sessionStorage.getItem("origin") +
-            " - " +
-            sessionStorage.getItem("destination") +
-            "\n" +
-            "TrainEmission for this trip are: " +
-            sessionStorage.getItem("trainEmissions") +
-            "\n" +
-            "Attractions ",
-          reply_to: userEmail.current.value,
-        },
-        "eRYDEyB32PsKmMAZH"
-      )
-      .then(
-        (result) => {
+    let stopsStr = ""
+    steps.forEach((step, index) => {
+      if(imgs[index].name !== undefined){
+        stopsStr += `stop ${index}: ${step} - 
+        ${imgs[index].name} 
+        click for info ${imgs[index].url}`
+      }else{
+      stopsStr += (`stop ${index}: ${step}`)
+      }
+  });
+    
+    emailjs.send('service_s2yn5li', 'template_h5y4o1e', {
+        from_name: "Travel-Lite Info",
+        message: "Your trip from: " + sessionStorage.getItem("origin") + ", to: " + sessionStorage.getItem("destination") + `.Train emissions for this trip are: ${sessionStorage.getItem("trainEmissions")} plane emission for this trip are: ${sessionStorage.getItem("planeEmissions")}: total carbon saved: ${sessionStorage.getItem("planeEmissions") - sessionStorage.getItem("trainEmissions")}.  Stops are: ${stopsStr}`,
+        reply_to: userEmail.current.value,
+      }, 'eRYDEyB32PsKmMAZH')
+      .then((result) => {
           console.log(result.text);
         },
         (error) => {
@@ -309,9 +303,17 @@ function Carbon() {
           <h3 className="text-black-400 underline pb-4 font-mono ">
             Your Trip Details
           </h3>
+          <div className="pl-2">  
+          <ForwardToInboxIcon
+            className="hover:text-gray-400 cursor-pointer"
+            type="submit"
+            id="email_toggle"
+            onClick={toggleModal}
+          />
+          </div>
         </div>
         <div className="flex justify-center">
-          <ul className="flex list-none">
+          <ul className=" flex list-none">
             {steps?.map((step, index) => {
               return (
                 <>
@@ -326,7 +328,7 @@ function Carbon() {
                       >
                         {index + 1} - {step}
                       </Typography>
-                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                      <Typography sx={{ mb: 1.5 }} color="text.secondary" className="font-mono">
                         <CardMedia
                           component="img"
                           height="194"
@@ -346,7 +348,7 @@ function Carbon() {
                           Click here for a trip idea
                         </button>
                       </Typography>
-                      <Typography variant="body2">
+                      <Typography variant="body2" className="font-mono">
                         <br />
                         {/* {imgs[index].caption} */}
                         {imgs[index].name}
