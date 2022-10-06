@@ -53,6 +53,10 @@ function Carbon() {
   const [runUpdateMap, setRunUpdateMap] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
+  // let tripDetails = {};
+
+
+
   const userEmail = useRef();
 
   function toggleModal() {
@@ -163,7 +167,7 @@ function Carbon() {
     setImgs(imgArray);
     callApi(step, google, geocoder)
       .then(
-        (response) =>
+        (response) => 
           // console.log(response),
           (imgArray[index] = {
             img: response.photo.images.medium.url,
@@ -184,7 +188,9 @@ function Carbon() {
 
     emailjs.send('service_s2yn5li', 'template_h5y4o1e', {
         from_name: "Travel-Lite Info",
-        message: "Your trip: " + sessionStorage.getItem("origin") + " - " + sessionStorage.getItem("destination") + "-",
+        message: "Your trip: " + sessionStorage.getItem("origin") + " - " + sessionStorage.getItem("destination") +"\n" +
+          "TrainEmission for this trip are: " + sessionStorage.getItem("trainEmissions") +"\n" +
+          "Attractions " ,
         reply_to: userEmail.current.value,
       }, 'eRYDEyB32PsKmMAZH')
       .then((result) => {
