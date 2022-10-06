@@ -13,15 +13,13 @@ import TrainIcon from "@mui/icons-material/Train";
 import PublicIcon from "@mui/icons-material/Public";
 import RouteIcon from "@mui/icons-material/Route";
 import "../index.css";
-import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { trainCalculator, planeCalculator } from "../components/CarbonCalc";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import CardMedia from "@mui/material/CardMedia";
 import { geocodeLocation, callApi } from "../api/locationFetch";
 import emailjs from "@emailjs/browser";
 import Modal from "react-modal";
@@ -142,8 +140,9 @@ function Carbon() {
               data[1]
             ) / 1000
           ).toFixed()
-        ), 
-      )
+        )
+      );
+
 
       setTrainDistance(currentRoute.distance.text);
       let trainDistanceKM = navigation.routes[0].legs[0].distance.value / 1000;
@@ -241,6 +240,7 @@ function Carbon() {
                 <td className="w-20 text-center">
                   <FlightTakeoffIcon />{" "}
                 </td>
+
                 <td className="w-48 h-20 text-center text-fuchsia-700 text-lg">
                   {planeEmissions.toLocaleString()} g{" "}
                 </td>
@@ -252,6 +252,7 @@ function Carbon() {
               <td className="text-center">
                 <TrainIcon />
               </td>
+
               <td className="w-48 h-20 text-center text-lg text-lime-600">
                 {trainEmissions.toLocaleString()} g{" "}
               </td>
@@ -293,7 +294,13 @@ function Carbon() {
         </Modal>
         <div className="w-full">
           <div className="flex justify-center pt-6">
-            <GoogleMap zoom={12} mapContainerClassName="w-8/12 h-96 rounded-lg">
+            <GoogleMap
+              zoom={12}
+              mapContainerClassName="w-8/12 h-96 rounded-lg"
+              options={{
+                mapTypeControl: false,
+              }}
+            >
               <Marker position={center} />
               {directionRes && <DirectionsRenderer directions={directionRes} />}
             </GoogleMap>
@@ -335,11 +342,14 @@ function Carbon() {
                           image=""
                           alt=""
                         />
+
                         <img
-                          className="object-contain"
-                          alt=""
                           src={imgs[index].img}
+                          alt=""
+                          loading="lazy"
+                          className=" rounded align-middle border-none h-40 w-72 flex justify-center object-fit"
                         />
+
                         <button
                           onClick={() => {
                             fetchStepInfo(step, index);
