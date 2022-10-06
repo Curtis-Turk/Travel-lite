@@ -20,7 +20,8 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { geocodeLocation, callApi } from "../api/locationFetch";
+import CardMedia from "@mui/material/CardMedia";
+import { geocodeLocation, callApi, getRandomInt } from "../api/locationFetch";
 import emailjs from "@emailjs/browser";
 import Modal from "react-modal";
 import { Link } from "react-router-dom";
@@ -49,6 +50,9 @@ function Carbon() {
   const [steps, setSteps] = useState([]);
   const [google, setGoogle] = useState();
   const [geocoder, setGeocoder] = useState();
+
+  const [stepData, setStepData] = useState([])
+
   const [imgs, setImgs] = useState("");
   const [render, setRender] = useState("");
   const [runUpdateMap, setRunUpdateMap] = useState(false);
@@ -123,6 +127,7 @@ function Carbon() {
       setSteps(stepArr);
       const emptyArr = stepArr.map((step) => (step = ""));
       setImgs(emptyArr);
+      setStepData(emptyArr);
 
       // --------- Set Route Comparison details --------- //
       const planeDistanceCalc = async () => {
@@ -161,25 +166,49 @@ function Carbon() {
 
   const fetchStepInfo = (step, index) => {
     let imgArray = [...imgs];
+    let dataArray = [...stepData];
     imgArray[index] = {
-      img: " https://media2.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif?cid=790b7611c5ecd6019dbf660f422e47974be9b67adc5fca1a&rid=giphy.gif&ct=g",
+      img: "https://media2.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif?cid=790b7611c5ecd6019dbf660f422e47974be9b67adc5fca1a&rid=giphy.gif&ct=g",
     };
     setImgs(imgArray);
     callApi(step, google, geocoder)
       .then(
-        (response) =>
-          // console.log(response),
-          (imgArray[index] = {
-            img: response.photo.images.medium.url,
-            name: response.name,
-            url: response.web_url,
-            rating: response.rating,
-            caption: response.photo.caption,
-          }),
-        setImgs(imgArray)
+        (response) => {
+          dataArray[index] = response
+          setStepData(dataArray)
+          checkForPhotoThenSet(imgArray, response, index, 0)
+        }
       )
       .then((img) => setRender(img));
   };
+
+
+  const checkForPhotoThenSet = (imgArray, response, index, indexToCheck) => {
+    if(response[indexToCheck].photo === undefined){
+      checkForPhotoThenSet(imgArray, response, indexToCheck + 1)
+    }
+    imgArray[index] = {
+      img: response[indexToCheck].photo.images.medium.url,
+      name: response[indexToCheck].name,
+      url: response[indexToCheck].web_url,
+      rating: response[indexToCheck].rating,
+      caption: response[indexToCheck].photo.caption,
+    }
+    setImgs(imgArray)
+  }
+
+  const resetStepImg = (step, index) => {
+    let newAttraction = stepData[index][getRandomInt(0,30)]
+    let imgArray = [...imgs]
+    imgArray[index] = {
+      img: newAttraction.photo.images.medium.url,
+      name: newAttraction.name,
+      url: newAttraction.web_url,
+      rating: newAttraction.rating,
+      caption: newAttraction.photo.caption,
+    }
+    setImgs(imgArray)
+  }
 
   const sendEmail = (e) => {
     e.preventDefault();
@@ -355,11 +384,28 @@ function Carbon() {
                       >
                         {index + 1} - {step}
                       </Typography>
+
+                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                        <CardMedia
+                          component="img"
+                          height="194"
+                          image=""
+                          alt=""
+                        />
+                        <button
+                          onClick={() => {
+                            fetchStepInfo(step, index);
+                          }}
+                        >
+                          Click here for a trip idea
+                        </button>
+
                       <Typography
                         sx={{ mb: 1.5 }}
                         color="text.secondary"
                         className="font-mono"
                       >
+
                         <img
                           src={imgs[index].img}
                           alt=""
@@ -367,12 +413,14 @@ function Carbon() {
                           className=" rounded align-middle border-none h-40 w-72 flex justify-center object-fit"
                         />
 
+                        <br></br>
+
                         <button
                           onClick={() => {
-                            fetchStepInfo(step, index);
+                            resetStepImg(step, index);
                           }}
                         >
-                          Click here for a trip idea
+                          Try another idea
                         </button>
                       </Typography>
                       <Typography variant="body2" className="font-mono">
