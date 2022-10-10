@@ -9,6 +9,12 @@ To encourage people to opt for alternative modes of transport to flying, our sit
 We're small group of Makers students who are passionate about coding for good and helping
 contribute to a better, greener world!
 
+## Instructions
+
+To install dependencies
+
+### `npm install`
+
 In the client directory, you can run:
 
 ### `npm start`
